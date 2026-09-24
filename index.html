@@ -1,0 +1,2227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fun on the Run Event Assistant | Plan Your Perfect Event</title>
+<meta name="description" content="Tell the Fun on the Run AI Event Assistant about your event and get personalised party rental recommendations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   DESIGN TOKENS
+   ========================================================= */
+:root{
+  --blue:#1F4FD1; --blue-deep:#12245C; --blue-soft:#E4EEFF;
+  --sun:#FFC933; --sun-deep:#F2A900; --cherry:#EF3E4A; --grass:#1FA463; --grape:#7A4DE0; --sky:#CFEBFF;
+  --bg:#F4F9FF; --surface:#FFFFFF; --surface-2:#EEF5FF; --ink:#12245C; --ink-2:#4A5A85; --ink-3:#7483A8;
+  --line:#D9E5F6; --on-blue:#FFFFFF; --on-sun:#12245C;
+  --bubble-ai:#FFFFFF; --bubble-user:#1F4FD1; --chat-bg:#F6FAFF;
+  --shadow-sm:0 1px 2px rgba(18,36,92,.08);
+  --shadow:0 2px 4px rgba(18,36,92,.05), 0 12px 32px rgba(18,36,92,.09);
+  --shadow-pop:0 6px 0 var(--blue-deep);
+  --font-display:'Fredoka','Baloo 2','Trebuchet MS',system-ui,sans-serif;
+  --font-body:'Nunito','Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+  --r-xl:28px; --r-lg:20px; --r-md:14px; --r-sm:10px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --blue:#6E95FF; --blue-deep:#0A1330; --blue-soft:#1C2A55;
+    --bg:#0D1530; --surface:#16213F; --surface-2:#1C2A4E; --ink:#EAF0FF; --ink-2:#B4C1E4; --ink-3:#8594BD;
+    --line:#2A3A66; --bubble-ai:#1C2A4E; --bubble-user:#3F6BEA; --chat-bg:#111B38; --sky:#1B2B55;
+    --shadow:0 2px 4px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35); --shadow-pop:0 6px 0 #050A1C;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --blue:#6E95FF; --blue-deep:#0A1330; --blue-soft:#1C2A55;
+  --bg:#0D1530; --surface:#16213F; --surface-2:#1C2A4E; --ink:#EAF0FF; --ink-2:#B4C1E4; --ink-3:#8594BD;
+  --line:#2A3A66; --bubble-ai:#1C2A4E; --bubble-user:#3F6BEA; --chat-bg:#111B38; --sky:#1B2B55;
+  --shadow:0 2px 4px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35); --shadow-pop:0 6px 0 #050A1C;
+  color-scheme:dark;
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+:root{ box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+*,*::before,*::after{ box-sizing:inherit; }
+html{ scroll-behavior:smooth; scroll-padding-top:calc(env(safe-area-inset-top,0px) + 84px); }
+body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+img,svg{ max-width:100%; }
+h1,h2,h3,h4{ font-family:var(--font-display); line-height:1.12; margin:0; letter-spacing:-.01em; }
+p{ margin:0; }
+a{ color:inherit; }
+button,input,textarea,select{ font:inherit; color:inherit; }
+button{ cursor:pointer; }
+:focus-visible{ outline:3px solid var(--sun); outline-offset:2px; border-radius:6px; }
+.skip{ position:absolute; left:-999px; top:8px; background:var(--sun); color:var(--on-sun); padding:8px 14px; border-radius:10px; z-index:200; font-weight:800; }
+.skip:focus{ left:12px; }
+.wrap{ width:min(1240px, 100% - 40px); margin-inline:auto; }
+.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+/* Buttons */
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:0; border-radius:999px; padding:12px 22px; font-weight:800; font-size:15px; text-decoration:none; transition:transform .15s ease, box-shadow .15s ease, background .15s ease; white-space:nowrap; }
+.btn:active{ transform:translateY(2px); }
+.btn-sun{ background:var(--sun); color:var(--on-sun); box-shadow:0 4px 0 var(--sun-deep); }
+.btn-sun:hover{ background:#FFD459; }
+.btn-sun:active{ box-shadow:0 1px 0 var(--sun-deep); }
+.btn-blue{ background:var(--blue); color:#fff; box-shadow:0 4px 0 #0E2E8C; }
+.btn-blue:hover{ filter:brightness(1.07); }
+.btn-blue:active{ box-shadow:0 1px 0 #0E2E8C; }
+.btn-ghost{ background:transparent; color:var(--blue); border:2px solid var(--line); padding:10px 18px; }
+.btn-ghost:hover{ border-color:var(--blue); }
+.btn-sm{ padding:8px 14px; font-size:13.5px; }
+.btn-lg{ padding:16px 28px; font-size:17px; }
+.btn[disabled]{ opacity:.5; cursor:not-allowed; }
+.btn svg{ width:18px; height:18px; flex:none; }
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+.site-header{ position:sticky; top:0; z-index:50; background:var(--surface); border-bottom:1px solid var(--line); }
+.site-header .wrap{ display:flex; align-items:center; gap:24px; min-height:72px; }
+.logo{ display:flex; align-items:center; gap:10px; text-decoration:none; flex:none; }
+.logo-mark{ width:46px; height:46px; flex:none; }
+.logo-word{ display:flex; flex-direction:column; line-height:1; }
+.logo-word b{ font-family:var(--font-display); font-weight:700; font-size:23px; color:var(--blue); letter-spacing:-.01em; }
+.logo-word b span{ color:var(--cherry); }
+.logo-word small{ font-size:11.5px; font-weight:700; color:var(--ink-3); margin-top:3px; }
+.nav{ display:flex; gap:4px; margin-left:auto; }
+.nav a{ text-decoration:none; font-weight:700; color:var(--ink-2); padding:8px 14px; border-radius:999px; font-size:15px; }
+.nav a:hover,.nav a[aria-current="page"]{ color:var(--blue); background:var(--blue-soft); }
+.header-cta{ display:flex; align-items:center; gap:12px; }
+.phone{ font-weight:800; color:var(--ink); text-decoration:none; font-size:14.5px; white-space:nowrap; }
+.menu-btn{ display:none; background:var(--surface-2); border:0; width:44px; height:44px; border-radius:12px; align-items:center; justify-content:center; }
+.menu-btn svg{ width:22px; height:22px; }
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{ position:relative; background:var(--blue); color:#fff; overflow:hidden; }
+.hero::before{ content:""; position:absolute; inset:0; background:
+  radial-gradient(circle at 12% 20%, rgba(255,255,255,.10) 0 60px, transparent 61px),
+  radial-gradient(circle at 88% 12%, rgba(255,255,255,.08) 0 90px, transparent 91px); pointer-events:none; }
+.hero .wrap{ position:relative; display:grid; grid-template-columns:1.05fr .95fr; align-items:center; gap:40px; padding:64px 0 120px; }
+.hero-kicker{ display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.14); padding:6px 14px 6px 8px; border-radius:999px; font-weight:700; font-size:14px; margin-bottom:22px; }
+.hero-kicker i{ width:22px; height:22px; border-radius:50%; background:var(--sun); display:grid; place-items:center; font-style:normal; color:var(--on-sun); font-size:12px; font-weight:800; }
+.hero h1{ font-size:clamp(38px, 5.4vw, 66px); font-weight:700; max-width:13ch; }
+.hero p.lede{ font-size:clamp(17px,1.6vw,19.5px); margin-top:20px; max-width:50ch; color:#E3ECFF; }
+.hero-actions{ display:flex; flex-wrap:wrap; gap:14px; margin-top:32px; align-items:center; }
+.hero-actions .link{ color:#fff; font-weight:800; text-decoration:underline; text-underline-offset:4px; text-decoration-thickness:2px; }
+.service-row{ display:flex; flex-wrap:wrap; gap:10px 20px; margin-top:36px; font-weight:700; font-size:14.5px; color:#DCE7FF; }
+.service-row span{ display:inline-flex; align-items:center; gap:7px; }
+.service-row svg{ width:18px; height:18px; color:var(--sun); }
+.hero-art{ position:relative; }
+.hero-art svg.scene{ width:100%; height:auto; display:block; }
+.hero-bubble{ position:absolute; background:#fff; color:var(--ink); border-radius:18px; padding:10px 14px; font-weight:700; font-size:14px; box-shadow:0 10px 24px rgba(10,20,60,.25); max-width:220px; }
+.hero-bubble.b1{ top:6%; left:-2%; border-bottom-left-radius:4px; }
+.hero-bubble.b2{ bottom:14%; right:-2%; background:var(--sun); color:var(--on-sun); border-bottom-right-radius:4px; }
+.hero-bubble small{ display:block; font-weight:700; font-size:11.5px; opacity:.7; margin-bottom:2px; }
+.wave{ position:absolute; left:0; right:0; bottom:-1px; width:100%; height:80px; display:block; }
+.wave path{ fill:var(--bg); }
+@media (prefers-reduced-motion: no-preference){
+  .hero-bubble{ animation:pop .6s cubic-bezier(.2,1.4,.4,1) both; }
+  .hero-bubble.b1{ animation-delay:.35s; } .hero-bubble.b2{ animation-delay:1.1s; }
+  .bouncy{ animation:bounce 2.8s ease-in-out infinite; transform-origin:50% 100%; }
+}
+@keyframes pop{ from{ opacity:0; transform:scale(.6) translateY(10px);} to{ opacity:1; transform:none; } }
+@keyframes bounce{ 0%,100%{ transform:scaleY(1);} 50%{ transform:scaleY(1.025) translateY(-2px);} }
+
+/* =========================================================
+   TRY THE ASSISTANT
+   ========================================================= */
+.try{ padding:8px 0 20px; margin-top:-56px; position:relative; z-index:2; }
+.try-card{ background:var(--surface); border-radius:var(--r-xl); box-shadow:var(--shadow); padding:26px 28px; display:grid; grid-template-columns:220px 1fr; gap:24px; align-items:center; }
+.try-card h2{ font-size:24px; }
+.try-card p{ color:var(--ink-2); font-size:14.5px; margin-top:6px; }
+.scenarios{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:12px; }
+.scenario{ text-align:left; background:var(--surface-2); border:2px solid transparent; border-radius:var(--r-lg); padding:14px 14px 14px; display:flex; flex-direction:column; gap:8px; transition:border-color .15s, background .15s; }
+.scenario:hover{ border-color:var(--blue); background:var(--surface); }
+.scenario .ico{ width:40px; height:40px; border-radius:12px; display:grid; place-items:center; }
+.scenario .ico svg{ width:22px; height:22px; }
+.scenario b{ font-family:var(--font-display); font-weight:600; font-size:17px; }
+.scenario span{ font-size:13.5px; color:var(--ink-2); line-height:1.4; }
+
+/* =========================================================
+   ASSISTANT SECTION
+   ========================================================= */
+.assistant-section{ padding:48px 0 72px; }
+.assistant-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:22px; flex-wrap:wrap; }
+.assistant-head h2{ font-size:clamp(30px,3.4vw,42px); color:var(--ink); }
+.assistant-head p{ color:var(--ink-2); font-size:17px; margin-top:8px; max-width:56ch; }
+.assistant-grid{ display:grid; grid-template-columns:minmax(0,1fr) 350px; gap:24px; align-items:start; }
+
+/* Chat shell */
+.chat{ background:var(--surface); border-radius:var(--r-xl); box-shadow:var(--shadow); display:flex; flex-direction:column; height:clamp(580px, 80vh, 800px); overflow:hidden; border:1px solid var(--line); }
+.chat-top{ display:flex; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--line); background:var(--surface); }
+.chat-top .who{ display:flex; flex-direction:column; line-height:1.2; }
+.chat-top .who b{ font-family:var(--font-display); font-weight:600; font-size:17px; }
+.chat-top .who small{ color:var(--grass); font-weight:700; font-size:12.5px; display:flex; align-items:center; gap:6px; }
+.chat-top .who small::before{ content:""; width:8px; height:8px; border-radius:50%; background:var(--grass); }
+.chat-top .tools{ margin-left:auto; display:flex; gap:8px; align-items:center; }
+.icon-btn{ background:var(--surface-2); border:0; border-radius:999px; height:38px; padding:0 14px; display:inline-flex; align-items:center; gap:6px; font-weight:800; font-size:13.5px; color:var(--ink-2); }
+.icon-btn:hover{ color:var(--blue); }
+.icon-btn svg{ width:17px; height:17px; }
+.icon-btn .count{ background:var(--blue); color:#fff; border-radius:999px; min-width:20px; height:20px; font-size:11.5px; display:inline-grid; place-items:center; padding:0 6px; }
+.details-toggle{ display:none; }
+.demo-banner{ display:none; align-items:center; gap:10px; background:var(--sun); color:var(--on-sun); padding:8px 18px; font-weight:800; font-size:13.5px; }
+.demo-banner.show{ display:flex; }
+.demo-banner button{ margin-left:auto; background:rgba(18,36,92,.12); border:0; border-radius:999px; padding:4px 12px; font-weight:800; font-size:12.5px; color:var(--on-sun); }
+
+.log{ flex:1; overflow-y:auto; padding:22px 20px 12px; background:var(--chat-bg); scroll-behavior:smooth; overscroll-behavior:contain; }
+.msg{ display:flex; gap:10px; align-items:flex-end; margin-bottom:14px; }
+.msg.user{ flex-direction:row-reverse; }
+.avatar{ width:36px; height:36px; border-radius:50%; flex:none; display:grid; place-items:center; overflow:hidden; }
+.avatar svg{ width:36px; height:36px; display:block; }
+.avatar.user{ background:var(--blue-soft); color:var(--blue); font-weight:800; font-size:13px; }
+.avatar.user svg{ width:20px; height:20px; }
+.bubble{ max-width:min(78%, 620px); padding:12px 16px; border-radius:20px; font-size:15.5px; line-height:1.5; box-shadow:var(--shadow-sm); overflow-wrap:anywhere; }
+.msg.ai .bubble{ background:var(--bubble-ai); border:1px solid var(--line); border-bottom-left-radius:6px; }
+.msg.user .bubble{ background:var(--bubble-user); color:#fff; border-bottom-right-radius:6px; }
+.bubble b{ font-weight:800; }
+.msg.enter{ animation:msgIn .28s ease-out both; }
+@keyframes msgIn{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:none; } }
+.caret::after{ content:""; display:inline-block; width:7px; height:15px; background:var(--blue); margin-left:2px; vertical-align:-2px; border-radius:2px; animation:blink .8s steps(2) infinite; }
+@keyframes blink{ 50%{ opacity:0; } }
+.thinking .bubble{ display:flex; align-items:center; gap:10px; color:var(--ink-3); font-size:14px; font-weight:700; }
+.dots{ display:inline-flex; gap:4px; }
+.dots i{ width:7px; height:7px; border-radius:50%; background:var(--blue); opacity:.35; animation:dot 1.1s infinite; }
+.dots i:nth-child(2){ animation-delay:.15s; } .dots i:nth-child(3){ animation-delay:.3s; }
+@keyframes dot{ 0%,100%{ opacity:.25; transform:translateY(0);} 40%{ opacity:1; transform:translateY(-4px);} }
+
+.rich{ margin:0 0 16px 46px; }
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin:-2px 0 16px 46px; }
+.chip{ background:var(--surface); border:1.5px solid var(--line); color:var(--blue); border-radius:999px; padding:8px 14px; font-weight:700; font-size:14px; transition:border-color .15s, background .15s; text-align:left; }
+.chip:hover{ border-color:var(--blue); background:var(--blue-soft); }
+.chip.action{ background:var(--blue); color:#fff; border-color:var(--blue); }
+.chip.action:hover{ filter:brightness(1.08); }
+.example-label{ margin:4px 0 8px 46px; font-size:13px; font-weight:700; color:var(--ink-3); }
+
+/* Composer */
+.composer{ border-top:1px solid var(--line); padding:12px 14px 10px; background:var(--surface); }
+.composer-row{ display:flex; gap:10px; align-items:flex-end; background:var(--surface-2); border:2px solid transparent; border-radius:22px; padding:6px 6px 6px 16px; transition:border-color .15s; }
+.composer-row:focus-within{ border-color:var(--blue); }
+.composer textarea{ flex:1; border:0; background:transparent; resize:none; outline:none; font-size:16px; line-height:1.45; padding:9px 0; max-height:140px; min-height:24px; }
+.composer textarea::placeholder{ color:var(--ink-3); }
+.send{ width:44px; height:44px; border-radius:50%; border:0; background:var(--blue); color:#fff; display:grid; place-items:center; flex:none; transition:transform .15s, opacity .15s; }
+.send:hover{ transform:scale(1.05); }
+.send[disabled]{ opacity:.4; transform:none; cursor:not-allowed; }
+.send svg{ width:20px; height:20px; }
+.trust{ display:flex; gap:8px; align-items:flex-start; font-size:12.5px; color:var(--ink-3); margin-top:9px; padding:0 4px; line-height:1.45; }
+.trust svg{ width:15px; height:15px; flex:none; margin-top:1px; color:var(--grass); }
+
+/* Recommendation cards */
+.rec-title{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.rec-title h3{ font-size:20px; }
+.rec-title .pill{ background:var(--sun); color:var(--on-sun); font-weight:800; font-size:12px; padding:3px 10px; border-radius:999px; }
+.rec-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(225px, 1fr)); gap:14px; }
+.card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); overflow:hidden; display:flex; flex-direction:column; box-shadow:var(--shadow-sm); }
+.card-art{ position:relative; aspect-ratio:3/2; display:block; background:var(--sky); }
+.card-art svg{ width:100%; height:100%; display:block; }
+.card-art .cat{ position:absolute; left:10px; top:10px; background:rgba(255,255,255,.94); color:#12245C; font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:999px; }
+.card-art .added-flag{ position:absolute; right:10px; top:10px; background:var(--grass); color:#fff; font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:999px; display:none; }
+.card.is-added .added-flag{ display:block; }
+.card-body{ padding:14px 14px 14px; display:flex; flex-direction:column; gap:8px; flex:1; }
+.card-body h4{ font-size:17.5px; font-weight:600; }
+.card-body p{ font-size:14px; color:var(--ink-2); line-height:1.45; }
+.why{ font-size:13px; color:var(--ink); background:var(--surface-2); border-radius:10px; padding:8px 10px; line-height:1.4; }
+.why b{ color:var(--blue); }
+.tags{ display:flex; flex-wrap:wrap; gap:6px; }
+.tag{ font-size:12px; font-weight:800; padding:4px 9px; border-radius:8px; background:var(--blue-soft); color:var(--blue); display:inline-flex; align-items:center; gap:5px; }
+.tag svg{ width:13px; height:13px; }
+.tag.out{ background:#E3F6EC; color:#137A47; } .tag.in{ background:#F1E9FF; color:#5B31C2; } .tag.both{ background:#FFF3D1; color:#8A5A00; }
+.tag.energy{ background:#FFE4E6; color:#B4232E; }
+:root[data-theme="dark"] .tag.out,:root[data-theme="dark"] .tag.in,:root[data-theme="dark"] .tag.both,:root[data-theme="dark"] .tag.energy{ filter:saturate(.9) brightness(.95); }
+.space-line{ font-size:13px; color:var(--ink-2); display:flex; align-items:center; gap:6px; font-weight:700; }
+.space-line svg{ width:15px; height:15px; color:var(--ink-3); }
+.card-actions{ display:flex; gap:8px; margin-top:auto; padding-top:4px; }
+.card-actions .btn{ flex:1; padding:10px 10px; font-size:13.5px; }
+.btn-add.is-added{ background:var(--grass); box-shadow:0 4px 0 #137A47; color:#fff; }
+
+/* Plan & package panels */
+.panel{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:20px; box-shadow:var(--shadow-sm); }
+.panel h3{ font-size:21px; }
+.panel h4{ font-size:16px; margin:18px 0 10px; font-weight:600; }
+.panel-head{ display:flex; align-items:center; gap:12px; }
+.panel-head .badge{ width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:var(--sun); flex:none; }
+.panel-head .badge svg{ width:22px; height:22px; color:var(--on-sun); }
+.panel-head p{ font-size:13.5px; color:var(--ink-2); }
+.plan-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:10px; margin-top:16px; }
+.plan-item{ background:var(--surface-2); border-radius:12px; padding:10px 12px; }
+.plan-item small{ display:block; font-size:12px; font-weight:700; color:var(--ink-3); }
+.plan-item b{ font-size:14.5px; font-weight:800; }
+.line-items{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+.line-item{ display:flex; align-items:center; gap:12px; background:var(--surface-2); border-radius:14px; padding:8px 10px 8px 8px; }
+.line-item .thumb{ width:62px; height:44px; border-radius:9px; overflow:hidden; flex:none; }
+.line-item .thumb svg{ width:100%; height:100%; display:block; }
+.line-item .meta{ flex:1; min-width:0; }
+.line-item .meta b{ display:block; font-size:14.5px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.line-item .meta small{ color:var(--ink-3); font-size:12.5px; font-weight:700; }
+.line-item .state{ font-size:12px; font-weight:800; color:var(--grass); }
+.line-item .suggested{ font-size:12px; font-weight:800; color:var(--ink-3); }
+.qty{ display:inline-flex; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:999px; }
+.qty button{ width:30px; height:30px; border:0; background:transparent; font-weight:800; font-size:16px; color:var(--blue); border-radius:50%; }
+.qty span{ min-width:22px; text-align:center; font-weight:800; font-size:14px; }
+.rm{ border:0; background:transparent; color:var(--ink-3); width:30px; height:30px; border-radius:50%; display:grid; place-items:center; }
+.rm:hover{ color:var(--cherry); background:var(--surface); }
+.rm svg{ width:16px; height:16px; }
+.panel-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+.pkg-facts{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:14px; font-size:14px; }
+.pkg-facts span b{ font-weight:800; }
+.included{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.included span{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:800; color:#137A47; background:#E3F6EC; padding:5px 10px; border-radius:999px; }
+.included svg{ width:14px; height:14px; }
+.note{ font-size:12.5px; color:var(--ink-3); margin-top:12px; line-height:1.45; }
+.empty-mini{ font-size:14px; color:var(--ink-3); background:var(--surface-2); padding:12px; border-radius:12px; }
+
+/* Sidebar */
+.sidebar{ position:sticky; top:calc(env(safe-area-inset-top,0px) + 92px); display:flex; flex-direction:column; gap:16px; }
+.side-card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl); box-shadow:var(--shadow); padding:20px; }
+.side-card h3{ font-size:20px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.side-card .sub{ color:var(--ink-2); font-size:14px; margin-top:4px; }
+.progress{ height:8px; border-radius:999px; background:var(--surface-2); margin:14px 0 6px; overflow:hidden; }
+.progress i{ display:block; height:100%; width:0; background:var(--grass); border-radius:inherit; transition:width .5s ease; }
+.progress-label{ font-size:12.5px; font-weight:700; color:var(--ink-3); }
+.fields{ list-style:none; padding:0; margin:14px 0 0; display:flex; flex-direction:column; gap:4px; }
+.field{ display:flex; align-items:center; gap:12px; padding:9px 8px; border-radius:12px; transition:background .6s; }
+.field .fi{ width:34px; height:34px; border-radius:10px; background:var(--surface-2); color:var(--ink-3); display:grid; place-items:center; flex:none; transition:background .3s, color .3s; }
+.field .fi svg{ width:18px; height:18px; }
+.field .fl{ flex:1; min-width:0; }
+.field small{ display:block; font-size:12px; color:var(--ink-3); font-weight:700; }
+.field b{ display:block; font-size:14.5px; font-weight:800; color:var(--ink); overflow-wrap:anywhere; }
+.field.empty b{ color:var(--ink-3); font-weight:600; font-style:italic; font-size:13.5px; }
+.field.filled .fi{ background:var(--blue); color:#fff; }
+.field.flash{ background:#FFF4CC; }
+:root[data-theme="dark"] .field.flash{ background:#3A3312; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .field.flash{ background:#3A3312; } }
+.extras{ display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+.extras span{ font-size:12px; font-weight:800; background:var(--surface-2); color:var(--ink-2); padding:5px 10px; border-radius:999px; }
+.my-event-list{ list-style:none; padding:0; margin:12px 0 0; display:flex; flex-direction:column; gap:8px; }
+.my-event-list li{ display:flex; align-items:center; gap:10px; font-size:14px; font-weight:700; }
+.my-event-list .thumb{ width:44px; height:32px; border-radius:7px; overflow:hidden; flex:none; }
+.my-event-list .thumb svg{ width:100%; height:100%; display:block; }
+.my-event-list .nm{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.side-card .btn{ width:100%; margin-top:14px; }
+.drawer-close{ display:none; }
+.scrim{ display:none; }
+
+/* Included strip + footer */
+.full-service{ background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:34px 0; }
+.full-service .wrap{ display:grid; grid-template-columns:1fr 2fr; gap:28px; align-items:center; }
+.full-service h2{ font-size:26px; }
+.full-service p{ color:var(--ink-2); margin-top:6px; }
+.fs-items{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.fs-item{ display:flex; gap:10px; align-items:flex-start; }
+.fs-item .i{ width:40px; height:40px; border-radius:12px; background:var(--blue-soft); color:var(--blue); display:grid; place-items:center; flex:none; }
+.fs-item .i svg{ width:20px; height:20px; }
+.fs-item b{ display:block; font-size:15px; }
+.fs-item span{ font-size:13px; color:var(--ink-2); }
+footer{ background:var(--blue-deep); color:#C9D6FA; padding:40px 0 30px; font-size:14px; }
+:root[data-theme="dark"] footer{ background:#070D22; }
+footer .wrap{ display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:28px; }
+footer .logo-word b{ color:#fff; } footer .logo-word small{ color:#9FB2E6; }
+footer h4{ color:#fff; font-size:16px; margin-bottom:10px; font-weight:600; }
+footer a{ color:#fff; text-decoration:none; } footer a:hover{ text-decoration:underline; }
+footer .fine{ grid-column:1/-1; border-top:1px solid rgba(255,255,255,.12); padding-top:18px; font-size:12.5px; color:#8FA2D6; }
+
+/* Modals */
+.modal{ position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; padding:20px; }
+.modal.open{ display:flex; }
+.modal-scrim{ position:absolute; inset:0; background:rgba(10,18,50,.55); animation:fade .2s ease both; }
+.modal-box{ position:relative; background:var(--surface); border-radius:var(--r-xl); width:min(760px, 100%); max-height:calc(100% - 20px); overflow:auto; box-shadow:0 30px 80px rgba(0,0,0,.35); animation:rise .25s cubic-bezier(.2,.9,.3,1.1) both; }
+.modal-box.narrow{ width:min(560px,100%); }
+@keyframes fade{ from{ opacity:0; } }
+@keyframes rise{ from{ opacity:0; transform:translateY(18px) scale(.98); } }
+.modal-close{ position:absolute; top:12px; right:12px; width:40px; height:40px; border-radius:50%; border:0; background:rgba(255,255,255,.92); color:#12245C; display:grid; place-items:center; z-index:2; box-shadow:var(--shadow-sm); }
+.modal-close svg{ width:20px; height:20px; }
+.pd-art{ aspect-ratio:2/1; background:var(--sky); }
+.pd-art svg{ width:100%; height:100%; display:block; }
+.pd-body{ padding:24px 26px 26px; }
+.pd-body .cat{ font-size:13px; font-weight:800; color:var(--cherry); }
+.pd-body h3{ font-size:30px; margin-top:4px; }
+.pd-body p.desc{ color:var(--ink-2); margin-top:10px; font-size:16px; max-width:62ch; }
+.pd-specs{ display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:10px; margin-top:18px; }
+.pd-spec{ background:var(--surface-2); border-radius:12px; padding:10px 12px; }
+.pd-spec small{ display:block; font-size:12px; font-weight:700; color:var(--ink-3); }
+.pd-spec b{ font-size:14.5px; }
+.pd-cols{ display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:20px; }
+.pd-cols h4{ font-size:16px; margin-bottom:8px; font-weight:600; }
+.ticks{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:7px; font-size:14.5px; }
+.ticks li{ display:flex; gap:8px; align-items:flex-start; }
+.ticks svg{ width:18px; height:18px; flex:none; color:var(--grass); margin-top:2px; }
+.pd-why{ margin-top:18px; background:#FFF6D6; color:#5A4300; border-radius:12px; padding:12px 14px; font-size:14px; }
+:root[data-theme="dark"] .pd-why{ background:#3A3312; color:#FFE9A6; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .pd-why{ background:#3A3312; color:#FFE9A6; } }
+.pd-actions{ display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
+
+.form-head{ padding:26px 26px 0; }
+.form-head h3{ font-size:26px; padding-right:40px; }
+.form-head p{ color:var(--ink-2); margin-top:6px; font-size:15px; }
+form.quote{ padding:18px 26px 26px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.fg{ display:flex; flex-direction:column; gap:6px; }
+.fg.full{ grid-column:1/-1; }
+.fg label{ font-weight:800; font-size:13.5px; }
+.fg label i{ color:var(--cherry); font-style:normal; }
+.fg input,.fg textarea{ border:2px solid var(--line); background:var(--surface); border-radius:12px; padding:11px 12px; font-size:15.5px; outline:none; transition:border-color .15s; width:100%; }
+.fg input:focus,.fg textarea:focus{ border-color:var(--blue); }
+.fg.invalid input{ border-color:var(--cherry); }
+.fg .err{ color:var(--cherry); font-size:12.5px; font-weight:700; display:none; }
+.fg.invalid .err{ display:block; }
+.sel-list{ display:flex; flex-wrap:wrap; gap:8px; }
+.sel-list span{ background:var(--blue-soft); color:var(--blue); font-weight:800; font-size:13px; padding:6px 10px; border-radius:999px; }
+.sel-empty{ font-size:13.5px; color:var(--ink-3); }
+.form-foot{ grid-column:1/-1; display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:4px; }
+.form-foot .note{ margin:0; flex:1; min-width:200px; }
+.spinner{ width:18px; height:18px; border:3px solid rgba(18,36,92,.25); border-top-color:var(--on-sun); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg);} }
+.success{ padding:40px 30px 32px; text-align:center; }
+.success .check{ width:78px; height:78px; border-radius:50%; background:var(--grass); display:grid; place-items:center; margin:0 auto 18px; color:#fff; }
+.success .check svg{ width:40px; height:40px; }
+.success h3{ font-size:28px; }
+.success p{ color:var(--ink-2); margin:12px auto 0; max-width:44ch; font-size:16px; }
+.success .ref{ display:inline-block; margin-top:16px; background:var(--surface-2); padding:8px 14px; border-radius:10px; font-weight:800; font-size:14px; }
+.success .btn{ margin-top:22px; }
+@media (prefers-reduced-motion: no-preference){ .success .check{ animation:pop .5s cubic-bezier(.2,1.5,.4,1) both; } }
+
+.toast{ position:fixed; left:50%; bottom:calc(env(safe-area-inset-bottom,0px) + 22px); transform:translate(-50%, 30px); opacity:0; background:var(--blue-deep); color:#fff; padding:12px 18px; border-radius:999px; font-weight:800; font-size:14.5px; z-index:150; transition:all .25s ease; pointer-events:none; display:flex; align-items:center; gap:8px; box-shadow:0 10px 30px rgba(0,0,0,.25); max-width:calc(100% - 30px); }
+:root[data-theme="dark"] .toast{ background:#2F4ED0; }
+.toast.show{ opacity:1; transform:translate(-50%,0); }
+.toast svg{ width:18px; height:18px; color:var(--sun); flex:none; }
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 1100px){
+  .scenarios{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .try-card{ grid-template-columns:1fr; }
+}
+@media (max-width: 1023px){
+  .assistant-grid{ grid-template-columns:1fr; }
+  .details-toggle{ display:inline-flex; }
+  .sidebar{ position:fixed; top:0; right:0; bottom:0; width:min(390px, 92vw); z-index:90; background:var(--bg); padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px); overflow-y:auto; transform:translateX(105%); transition:transform .3s ease; box-shadow:-20px 0 50px rgba(0,0,0,.2); }
+  .sidebar.open{ transform:none; }
+  .drawer-close{ display:inline-flex; align-self:flex-end; }
+  .scrim.open{ display:block; position:fixed; inset:0; background:rgba(10,18,50,.45); z-index:85; }
+  .full-service .wrap{ grid-template-columns:1fr; }
+  .fs-items{ grid-template-columns:repeat(2,1fr); }
+  .hero .wrap{ grid-template-columns:1fr; padding:44px 0 110px; }
+  .hero-art{ max-width:520px; }
+}
+@media (max-width: 860px){
+  .nav,.phone{ display:none; }
+  .menu-btn{ display:inline-flex; margin-left:auto; }
+  .nav.open{ display:flex; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:var(--surface); padding:10px 16px 16px; border-bottom:1px solid var(--line); box-shadow:var(--shadow); }
+  .nav.open a{ padding:12px 14px; }
+  footer .wrap{ grid-template-columns:1fr; }
+}
+@media (max-width: 640px){
+  .wrap{ width:min(1240px, 100% - 24px); }
+  .site-header .wrap{ gap:10px; min-height:64px; }
+  .logo-mark{ width:38px; height:38px; } .logo-word b{ font-size:19px; } .logo-word small{ display:none; }
+  .header-cta .btn{ padding:9px 14px; font-size:13.5px; }
+  .hero .wrap{ padding:34px 0 100px; }
+  .hero-bubble{ font-size:12.5px; max-width:170px; }
+  .try{ margin-top:-60px; }
+  .try-card{ padding:20px 16px; border-radius:22px; }
+  .scenarios{ grid-template-columns:1fr 1fr; gap:10px; }
+  .scenario{ padding:12px; } .scenario span{ font-size:12.5px; }
+  .assistant-section{ padding:32px 0 48px; }
+  .chat{ height:calc(100dvh - 90px); min-height:520px; border-radius:22px; }
+  .log{ padding:16px 12px 8px; }
+  .bubble{ max-width:86%; font-size:15px; }
+  .rich,.chips,.example-label{ margin-left:0; }
+  .rec-grid{ grid-auto-flow:column; grid-auto-columns:82%; grid-template-columns:none; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:6px; margin:0 -12px; padding-inline:12px; }
+  .rec-grid .card{ scroll-snap-align:start; }
+  .chat-top .who small{ display:none; }
+  .icon-btn .lbl{ display:none; }
+  form.quote{ grid-template-columns:1fr; padding:16px 18px 20px; }
+  .form-head{ padding:22px 18px 0; }
+  .pd-body{ padding:20px 18px 22px; }
+  .pd-cols{ grid-template-columns:1fr; }
+  .pd-body h3{ font-size:25px; }
+  .modal{ padding:0; align-items:flex-end; }
+  .modal-box{ border-radius:24px 24px 0 0; max-height:92%; }
+  .fs-items{ grid-template-columns:1fr; }
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#assistant">Skip to the Event Assistant</a>
+
+<!-- ======================= HEADER ======================= -->
+<header class="site-header">
+  <div class="wrap">
+    <!-- Logo: placeholder wordmark in brand colours. Swap in the official Fun on the Run logo file (e.g. <img src="/logo.svg">) for production. -->
+    <a class="logo" href="#top" aria-label="Fun on the Run home">
+      <svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="23" fill="#FFC933"/>
+        <path d="M11 33 Q24 8 37 33 Z" fill="#EF3E4A"/>
+        <path d="M11 33 Q17.5 20 24 17 Q30.5 20 37 33" fill="none" stroke="#fff" stroke-width="2.4"/>
+        <rect x="9" y="32" width="30" height="6" rx="3" fill="#1F4FD1"/>
+        <circle cx="24" cy="12.5" r="3" fill="#1F4FD1"/>
+      </svg>
+      <span class="logo-word"><b>Fun on the <span>Run</span></b><small>Event &amp; party rentals since 1996</small></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="#top" aria-current="page">Home</a>
+      <a href="https://funontherun.com/rentals" target="_blank" rel="noopener">Rentals</a>
+      <a href="#try">Events</a>
+      <a href="https://funontherun.com/about-us" target="_blank" rel="noopener">About</a>
+      <a href="https://funontherun.com/contact-us" target="_blank" rel="noopener">Contact</a>
+    </nav>
+    <div class="header-cta">
+      <a class="phone" href="tel:+13096939475">(309) 693-9475</a>
+      <button class="btn btn-sun" id="headerQuote" type="button">Get a Quote</button>
+    </div>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+<!-- ======================= HERO ======================= -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <div class="hero-kicker"><i>AI</i> New: Event Assistant</div>
+      <h1>Plan Your Perfect Event With Fun on the Run</h1>
+      <p class="lede">Not sure what entertainment is right for your event? Tell our AI Event Assistant what you're planning and discover personalised rental recommendations.</p>
+      <div class="hero-actions">
+        <button class="btn btn-sun btn-lg" id="startPlanning" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></svg>
+          AI Assistant
+        </button>
+        <a class="link" href="https://funontherun.com/rentals" target="_blank" rel="noopener">Browse all rentals</a>
+      </div>
+      <div class="service-row" aria-label="Every rental includes">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>Delivery</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>Set up</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>Tear down</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>Fully insured</span>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg class="scene" viewBox="0 0 520 420">
+        <ellipse cx="260" cy="392" rx="240" ry="22" fill="#1740AE"/>
+        <!-- Slide -->
+        <g class="bouncy">
+          <path d="M340 390 L340 150 Q340 120 370 120 L400 120 Q430 120 430 150 L430 390 Z" fill="#FFC933"/>
+          <path d="M430 160 C470 200 470 300 500 390 L452 390 C430 310 420 240 404 190 Z" fill="#EF3E4A"/>
+          <path d="M440 175 C470 215 468 300 488 382" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/>
+          <rect x="352" y="140" width="66" height="10" rx="5" fill="#fff" opacity=".6"/>
+        </g>
+        <!-- Castle -->
+        <g class="bouncy" style="animation-delay:.4s">
+          <rect x="60" y="200" width="270" height="180" rx="22" fill="#EF3E4A"/>
+          <rect x="30" y="140" width="62" height="240" rx="26" fill="#FFC933"/>
+          <rect x="298" y="140" width="62" height="240" rx="26" fill="#FFC933"/>
+          <path d="M26 150 Q61 70 96 150 Z" fill="#1FA463"/>
+          <path d="M294 150 Q329 70 364 150 Z" fill="#1FA463"/>
+          <line x1="61" y1="94" x2="61" y2="60" stroke="#fff" stroke-width="4"/><path d="M61 60 L90 70 L61 80 Z" fill="#fff"/>
+          <line x1="329" y1="94" x2="329" y2="60" stroke="#fff" stroke-width="4"/><path d="M329 60 L358 70 L329 80 Z" fill="#fff"/>
+          <path d="M60 212 Q128 170 195 212 Q262 170 330 212" fill="none" stroke="#FFC933" stroke-width="18" stroke-linecap="round"/>
+          <rect x="112" y="240" width="166" height="104" rx="16" fill="#fff" opacity=".9"/>
+          <g stroke="#EF3E4A" stroke-width="3" opacity=".5">
+            <line x1="140" y1="240" x2="140" y2="344"/><line x1="168" y1="240" x2="168" y2="344"/><line x1="196" y1="240" x2="196" y2="344"/><line x1="224" y1="240" x2="224" y2="344"/><line x1="252" y1="240" x2="252" y2="344"/>
+            <line x1="112" y1="266" x2="278" y2="266"/><line x1="112" y1="292" x2="278" y2="292"/><line x1="112" y1="318" x2="278" y2="318"/>
+          </g>
+          <rect x="44" y="360" width="302" height="30" rx="15" fill="#1F4FD1" stroke="#fff" stroke-width="3"/>
+          <circle cx="61" cy="200" r="7" fill="#fff" opacity=".6"/><circle cx="329" cy="200" r="7" fill="#fff" opacity=".6"/>
+        </g>
+        <!-- Confetti -->
+        <g>
+          <circle cx="210" cy="90" r="8" fill="#FFC933"/><circle cx="250" cy="130" r="5" fill="#fff"/>
+          <rect x="160" y="120" width="12" height="12" rx="3" fill="#1FA463" transform="rotate(20 166 126)"/>
+          <rect x="460" y="70" width="12" height="12" rx="3" fill="#FFC933" transform="rotate(-15 466 76)"/>
+          <circle cx="490" cy="130" r="6" fill="#EF3E4A"/>
+        </g>
+      </svg>
+      <div class="hero-bubble b1"><small>You</small>Birthday for 30 kids, ages 7–10, outdoors</div>
+      <div class="hero-bubble b2"><small>Event Assistant</small>Here are 4 rentals that fit your party</div>
+    </div>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C 180 80 360 0 540 30 C 720 60 900 10 1080 34 C 1260 58 1350 30 1440 40 L1440 80 L0 80 Z"/></svg>
+</section>
+
+<!-- ======================= TRY THE ASSISTANT ======================= -->
+<section class="try" id="try">
+  <div class="wrap">
+    <div class="try-card">
+      <div>
+        <h2>Try the Assistant</h2>
+        <p>Pick an event and watch the assistant plan it from start to finish.</p>
+      </div>
+      <div class="scenarios" id="scenarios"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ASSISTANT ======================= -->
+<section class="assistant-section" id="assistant" aria-labelledby="assistantTitle">
+  <div class="wrap">
+    <div class="assistant-head">
+      <div>
+        <h2 id="assistantTitle">Fun on the Run Event Assistant</h2>
+        <p>Tell us about your event and we'll help you find the perfect entertainment.</p>
+      </div>
+    </div>
+
+    <div class="assistant-grid">
+      <!-- Chat -->
+      <div class="chat" id="chat">
+        <div class="chat-top">
+          <span class="avatar" id="topAvatar"></span>
+          <div class="who"><b>Event Assistant</b><small>Ready to help plan</small></div>
+          <div class="tools">
+            <button class="icon-btn details-toggle" id="detailsToggle" type="button" aria-controls="sidebar" aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+              <span class="lbl">Event details</span><span class="count" id="detailsCount">0</span>
+            </button>
+            <button class="icon-btn" id="restartBtn" type="button" title="Start over">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+              <span class="lbl">Start over</span>
+            </button>
+          </div>
+        </div>
+        <div class="demo-banner" id="demoBanner" role="status"><span id="demoLabel">Running demo…</span><button type="button" id="stopDemo">Stop demo</button></div>
+        <div class="log" id="log" role="log" aria-live="polite" aria-label="Conversation with the Event Assistant"></div>
+        <div class="composer">
+          <form class="composer-row" id="composer" autocomplete="off">
+            <label for="input" class="sr-only">Message the Event Assistant</label>
+            <textarea id="input" rows="1" placeholder="Describe your event, e.g. a birthday for 30 kids in the backyard…"></textarea>
+            <button class="send" id="sendBtn" type="submit" aria-label="Send message" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </form>
+          <p class="trust">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span>Recommendations are based on Fun on the Run's available entertainment and rental options. Final availability, pricing and suitability can be confirmed by our team.</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar" aria-label="Event details">
+        <button class="icon-btn drawer-close" id="drawerClose" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg> Close
+        </button>
+        <div class="side-card">
+          <h3>Event Details</h3>
+          <p class="sub" id="profileSub">We'll build your event profile as we chat.</p>
+          <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+          <div class="progress-label" id="progressLabel">0 of 7 details</div>
+          <ul class="fields" id="fields"></ul>
+          <div class="extras" id="extras"></div>
+        </div>
+        <div class="side-card">
+          <h3>My Event <span class="icon-btn" style="height:28px;padding:0 10px;cursor:default" id="myCount">0 items</span></h3>
+          <ul class="my-event-list" id="myEventList"></ul>
+          <button class="btn btn-blue" id="sideBuild" type="button" disabled>Build My Event Package</button>
+        </div>
+      </aside>
+      <div class="scrim" id="scrim"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= FULL SERVICE ======================= -->
+<section class="full-service" aria-labelledby="fsTitle">
+  <div class="wrap">
+    <div>
+      <h2 id="fsTitle">We bring the fun to you</h2>
+      <p>Every rental is full service. Family owned and serving Central Illinois and beyond since 1996.</p>
+    </div>
+    <div class="fs-items">
+      <div class="fs-item"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></span><div><b>Delivery</b><span>Right to your location</span></div></div>
+      <div class="fs-item"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4 2.5-2.5Z"/></svg></span><div><b>Set up</b><span>Handled by our team</span></div></div>
+      <div class="fs-item"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></span><div><b>Tear down</b><span>After the party ends</span></div></div>
+      <div class="fs-item"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><div><b>Insured</b><span>For your peace of mind</span></div></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="logo" href="#top" aria-label="Fun on the Run home">
+        <svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#FFC933"/><path d="M11 33 Q24 8 37 33 Z" fill="#EF3E4A"/><path d="M11 33 Q17.5 20 24 17 Q30.5 20 37 33" fill="none" stroke="#fff" stroke-width="2.4"/><rect x="9" y="32" width="30" height="6" rx="3" fill="#1F4FD1"/><circle cx="24" cy="12.5" r="3" fill="#1F4FD1"/></svg>
+        <span class="logo-word"><b>Fun on the <span>Run</span></b><small>We're in business for the fun of it</small></span>
+      </a>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <p>721 NE Adams St.<br>Peoria, IL 61603</p>
+      <p style="margin-top:8px"><a href="tel:+13096939475">(309) 693-9475</a><br><a href="mailto:info@funontherun.com">info@funontherun.com</a></p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <p><a href="https://funontherun.com/rentals" target="_blank" rel="noopener">All rentals</a><br><a href="https://funontherun.com/faqs" target="_blank" rel="noopener">FAQs</a><br><a href="https://funontherun.com/contact-us" target="_blank" rel="noopener">Contact us</a></p>
+    </div>
+    <p class="fine">Proof of concept. Product names, descriptions and specifications in this demo are sample data and will be replaced with Fun on the Run's live catalogue. No bookings or payments are processed.</p>
+  </div>
+</footer>
+
+<!-- ======================= MODALS ======================= -->
+<div class="modal" id="productModal" role="dialog" aria-modal="true" aria-labelledby="pdTitle">
+  <div class="modal-scrim" data-close></div>
+  <div class="modal-box" id="productBox"></div>
+</div>
+<div class="modal" id="quoteModal" role="dialog" aria-modal="true" aria-labelledby="qTitle">
+  <div class="modal-scrim" data-close></div>
+  <div class="modal-box narrow" id="quoteBox"></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- =====================================================================
+     1) DATA + AI ENGINE  (no DOM access — safe to move server-side later)
+     ===================================================================== -->
+<script>
+'use strict';
+
+/* ---------------------------------------------------------------------
+   MOCK PRODUCT CATALOGUE
+   Replace with Fun on the Run's real catalogue (CMS export / API).
+   Each product keeps the same shape so the engine and UI keep working:
+   - ages: [min, max] (99 = adults)      - setting: 'outdoor' | 'indoor' | 'both'
+   - dims: [width, length] in feet       - events: event keys it suits
+   - prefs: preference keys (first = primary)
+   --------------------------------------------------------------------- */
+const CATALOG = [
+  // ---------- INFLATABLES ----------
+  { id:'tropical-combo', name:'Tropical Bounce & Slide Combo', group:'Inflatables', category:'Combo Units',
+    desc:'Bounce area, climbing wall and slide in one palm-tree themed unit. Great for children\u2019s birthday parties and outdoor celebrations.',
+    ages:[4,12], setting:'outdoor', dims:[18,26], capacity:'8\u201310 kids at a time', energy:'High energy', throughput:'med',
+    events:['birthday','summer','block','church','school','reunion'], prefs:['inflatables','slides'], themes:['tropical','luau','hawaiian','jungle','beach'],
+    features:['Bounce, climb and slide in one footprint','Inside basketball hoop','Mesh walls so parents can see in'],
+    idealFor:['Backyard birthdays','Outdoor celebrations','Mixed ages 4\u201312'], power:'1 standard outlet within 50 ft', art:'combo' },
+  { id:'castle-classic', name:'Castle Classic Bounce House', group:'Inflatables', category:'Bounce Houses',
+    desc:'A bright, roomy castle bouncer with a shaded roof. The go-to choice for younger kids and smaller yards.',
+    ages:[3,10], setting:'both', dims:[15,15], capacity:'6\u20138 kids at a time', energy:'High energy', throughput:'low',
+    events:['birthday','church','block','reunion','community','fundraiser'], prefs:['inflatables'], themes:['princess','castle','knight','medieval'],
+    features:['Covered roof for shade','Front entry ramp','Fits most backyards'],
+    idealFor:['Younger kids','Smaller spaces','Indoor gyms with 16 ft ceilings'], power:'1 standard outlet within 50 ft', art:'castle' },
+  { id:'rainbow-palace', name:'Rainbow Palace Bounce House', group:'Inflatables', category:'Bounce Houses',
+    desc:'A colourful palace bouncer that suits unicorn, rainbow and princess themed parties.',
+    ages:[3,10], setting:'both', dims:[13,13], capacity:'6 kids at a time', energy:'High energy', throughput:'low',
+    events:['birthday','church','block'], prefs:['inflatables'], themes:['unicorn','rainbow','princess','fairy'],
+    features:['Compact 13\u2019 \u00d7 13\u2019 footprint','Pastel rainbow panels','Great for photos'],
+    idealFor:['Themed birthdays','Toddlers to 10-year-olds','Compact yards'], power:'1 standard outlet within 50 ft', art:'castle2' },
+  { id:'sports-arena', name:'All-Star Sports Arena Bouncer', group:'Inflatables', category:'Bounce Houses',
+    desc:'A sports-themed bouncer with a built-in hoop, made for kids who never stop moving.',
+    ages:[4,12], setting:'both', dims:[15,15], capacity:'6\u20138 kids at a time', energy:'High energy', throughput:'low',
+    events:['birthday','school','church','community'], prefs:['inflatables','sports'], themes:['sports','basketball','football','soccer'],
+    features:['Interior basketball hoop','Stadium graphics','Works indoors and out'],
+    idealFor:['Sports-themed parties','Active kids','School fun nights'], power:'1 standard outlet within 50 ft', art:'castle3' },
+  { id:'mega-rock-slide', name:'Mega Rock Slide 22\u2019', group:'Inflatables', category:'Inflatable Slides',
+    desc:'A towering climbing wall and slide that keeps big lines moving. Tall enough to thrill teens and adults.',
+    ages:[5,99], setting:'outdoor', dims:[16,36], capacity:'Single-file, fast-moving line', energy:'High energy', throughput:'high',
+    events:['school','community','corporate','summer','fundraiser','graduation','church'], prefs:['slides','inflatables'], themes:['adventure','mountain'],
+    features:['22 ft climbing wall','Handles big crowds quickly','Striking centrepiece for festivals'],
+    idealFor:['School carnivals','Community festivals','Big open spaces'], power:'2 outlets on separate circuits', art:'slide' },
+  { id:'ninja-rush', name:'Ninja Rush Obstacle Course 60\u2019', group:'Inflatables', category:'Obstacle Courses',
+    desc:'Side-by-side racing lanes with pop-ups, crawl tunnels and a finish slide. Perfect for relays and friendly rivalry.',
+    ages:[6,99], setting:'outdoor', dims:[14,62], capacity:'2 racers side by side', energy:'High energy', throughput:'high',
+    events:['school','corporate','community','church','fundraiser','graduation','birthday'], prefs:['obstacle','inflatables','sports'], themes:['ninja','adventure','sports'],
+    features:['Two racing lanes','Great for timed heats and relays','Kids and adults can race together'],
+    idealFor:['School field days','Corporate team challenges','Teens and adults'], power:'2 outlets on separate circuits', art:'obstacle' },
+  { id:'junior-jungle', name:'Junior Jungle Obstacle Course', group:'Inflatables', category:'Obstacle Courses',
+    desc:'A shorter, softer obstacle run sized for little adventurers, with gentle climbs and a mini slide.',
+    ages:[3,8], setting:'both', dims:[10,34], capacity:'4\u20136 kids at a time', energy:'High energy', throughput:'med',
+    events:['birthday','church','school'], prefs:['obstacle','inflatables'], themes:['jungle','safari','animals','dinosaur'],
+    features:['Low climbs for small kids','Animal graphics','Indoor friendly'],
+    idealFor:['Preschool and early grades','Jungle or safari themes','Church VBS'], power:'1 standard outlet within 50 ft', art:'obstacle2' },
+  { id:'toddler-treehouse', name:'Toddler Treehouse Soft Play', group:'Other Event Entertainment', category:'Soft Play',
+    desc:'Foam climbers, blocks and a mini slide in a low, open play zone. Quiet enough for indoor venues.',
+    ages:[1,5], setting:'both', dims:[12,12], capacity:'8\u201310 toddlers', energy:'Relaxed', throughput:'low',
+    events:['birthday','church','reunion','community','corporate','wedding'], prefs:['softplay'], themes:['woodland','animals','baby'],
+    features:['No blower noise','Soft foam pieces','Easy for parents to supervise'],
+    idealFor:['First birthdays','Toddler zones at big events','Indoor venues'], power:'None required', art:'softplay' },
+
+  // ---------- WATER ----------
+  { id:'tidal-wave', name:'Tidal Wave Water Slide 18\u2019', group:'Water Attractions', category:'Water Slides',
+    desc:'A tall, fast water slide that lands in a splash pool. The easiest way to cool a crowd on a hot day.',
+    ages:[6,99], setting:'outdoor', dims:[14,38], capacity:'Single-file line', energy:'High energy', throughput:'high',
+    events:['summer','birthday','school','block','church','graduation','reunion'], prefs:['water','slides','inflatables'], themes:['beach','ocean','surf','tropical'],
+    features:['Splash pool landing','Runs off a garden hose','Big thrill for older kids'],
+    idealFor:['Summer parties','End-of-year school bashes','Hot afternoons'], power:'1 outlet + garden hose', art:'waterslide' },
+  { id:'splash-lagoon', name:'Splash Lagoon Wet/Dry Combo', group:'Water Attractions', category:'Wet/Dry Slides',
+    desc:'Bounce and slide with water on hot days, or run it dry if the weather cools. A flexible summer favourite.',
+    ages:[4,12], setting:'outdoor', dims:[16,28], capacity:'6\u20138 kids at a time', energy:'High energy', throughput:'med',
+    events:['summer','birthday','block','church','reunion'], prefs:['water','inflatables','slides'], themes:['tropical','under the sea','mermaid','ocean','luau','beach'],
+    features:['Use wet or dry','Bounce area plus slide','Lagoon theme'],
+    idealFor:['Summer birthdays','Unpredictable weather','Ages 4\u201312'], power:'1 outlet + garden hose', art:'waterslide2' },
+  { id:'surf-racer', name:'Double Surf Racer Water Slide', group:'Water Attractions', category:'Water Slides',
+    desc:'Two side-by-side lanes so riders can race to the splash zone. Built for big summer crowds.',
+    ages:[7,99], setting:'outdoor', dims:[20,44], capacity:'2 riders at once', energy:'High energy', throughput:'high',
+    events:['summer','school','corporate','community','graduation'], prefs:['water','slides','inflatables'], themes:['surf','beach','ocean'],
+    features:['Dual racing lanes','Moves lines fast','Teen and adult friendly'],
+    idealFor:['Large summer events','Company picnics','Graduation parties'], power:'2 outlets + garden hose', art:'waterslide3' },
+  { id:'balloon-battle', name:'Water Balloon Battle Zone', group:'Water Attractions', category:'Water Games',
+    desc:'Launchers, targets and a refill station for team water balloon battles. Hilarious for kids and adults.',
+    ages:[8,99], setting:'outdoor', dims:[30,30], capacity:'Teams of 4\u201310', energy:'High energy', throughput:'med',
+    events:['summer','corporate','block','reunion','graduation','church'], prefs:['water','interactive','sports'], themes:['summer','army','camo'],
+    features:['Team vs team play','Balloon fill station','No inflatable needed'],
+    idealFor:['Company family days','Youth groups','Teens'], power:'Garden hose only', art:'balloon' },
+
+  // ---------- INTERACTIVE ----------
+  { id:'light-reflex', name:'Light Reflex Challenge', group:'Interactive Entertainment', category:'Interactive Games',
+    desc:'Hit the lights before they go out. A fast reaction game with a scoreboard that sparks friendly competition.',
+    ages:[6,99], setting:'both', dims:[10,10], capacity:'1\u20132 players, quick turns', energy:'Moderate', throughput:'med',
+    events:['corporate','school','birthday','community','graduation','fundraiser','church'], prefs:['interactive','gaming'], themes:['neon','glow','space','tech'],
+    features:['Live scoreboard','Quick turns keep lines short','Works indoors'],
+    idealFor:['Corporate events','Teens and adults','Indoor venues'], power:'1 standard outlet', art:'reflex' },
+  { id:'gladiator-joust', name:'Gladiator Joust Arena', group:'Interactive Entertainment', category:'Team Games',
+    desc:'Two players, padded jousting sticks and a soft landing. As much fun to watch as it is to play.',
+    ages:[8,99], setting:'both', dims:[20,20], capacity:'2 players', energy:'High energy', throughput:'med',
+    events:['corporate','school','graduation','church','community','birthday'], prefs:['interactive','inflatables','sports'], themes:['gladiator','medieval','knight'],
+    features:['Padded jousting sticks','Spectator favourite','Great for teens and adults'],
+    idealFor:['Youth groups','Company picnics','Graduation parties'], power:'1 standard outlet', art:'joust' },
+  { id:'last-one-standing', name:'Last One Standing Sweeper', group:'Interactive Entertainment', category:'Interactive Games',
+    desc:'A spinning arm sweeps the arena and players jump to stay in. Simple rules, endless laughs.',
+    ages:[6,99], setting:'both', dims:[30,30], capacity:'Up to 6 players', energy:'High energy', throughput:'med',
+    events:['birthday','school','corporate','church','graduation','community'], prefs:['interactive','inflatables'], themes:['game show','neon'],
+    features:['Up to 6 players per round','Adjustable speed','Kids and adults together'],
+    idealFor:['Birthday parties','Youth groups','Mixed ages'], power:'2 standard outlets', art:'sweeper' },
+  { id:'soccer-darts', name:'Giant Soccer Darts', group:'Interactive Entertainment', category:'Sports Games',
+    desc:'Kick a ball at a giant velcro dartboard. Easy to learn, great for all skill levels.',
+    ages:[5,99], setting:'both', dims:[12,16], capacity:'1 player at a time', energy:'Moderate', throughput:'med',
+    events:['corporate','school','community','church','birthday','reunion'], prefs:['sports','interactive'], themes:['sports','soccer','world cup'],
+    features:['Velcro balls stick to the board','All skill levels','Easy to score'],
+    idealFor:['Sports fans','Family days','Field days'], power:'1 standard outlet', art:'darts' },
+  { id:'hoop-shot', name:'Hoop Shot Basketball Duo', group:'Interactive Entertainment', category:'Sports Games',
+    desc:'Side-by-side hoops for head-to-head shooting contests. A quick, competitive crowd-pleaser.',
+    ages:[5,99], setting:'both', dims:[8,16], capacity:'2 players', energy:'Moderate', throughput:'med',
+    events:['corporate','school','birthday','graduation','fundraiser','community'], prefs:['sports','interactive'], themes:['sports','basketball'],
+    features:['Head-to-head play','Compact footprint','Indoor friendly'],
+    idealFor:['Teens','Gym events','Fundraisers'], power:'1 standard outlet', art:'hoops' },
+  { id:'field-day-kit', name:'Field Day Team Games Kit', group:'Interactive Entertainment', category:'Team Games',
+    desc:'Tug-of-war rope, sack races, relay batons and cones. Everything you need to run classic team games.',
+    ages:[6,99], setting:'outdoor', dims:[40,60], capacity:'20\u2013200 players', energy:'Moderate', throughput:'high',
+    events:['corporate','school','church','reunion','block','community'], prefs:['sports','interactive'], themes:['sports','olympics','field day'],
+    features:['Scales to large groups','Printed game guide included','No power required'],
+    idealFor:['Corporate team building','School field days','Family reunions'], power:'None required', art:'team' },
+
+  // ---------- CARNIVAL ----------
+  { id:'carnival-station', name:'Classic Carnival Game Station', group:'Carnival', category:'Carnival Games',
+    desc:'Four midway games in one booth: ring toss, bean bag, duck pond and milk bottles. Easy for volunteers to run.',
+    ages:[3,99], setting:'both', dims:[10,20], capacity:'4 games at once', energy:'Moderate', throughput:'high',
+    events:['school','community','church','birthday','fundraiser','corporate','block'], prefs:['carnival','interactive'], themes:['carnival','circus','fair'],
+    features:['4 games in one booth','Prize bins (prizes not included)','Simple for volunteers'],
+    idealFor:['School carnivals','Church festivals','All ages'], power:'None required', art:'carnival' },
+  { id:'dunk-tank', name:'Dunk Tank', group:'Carnival', category:'Carnival Attractions',
+    desc:'Dunk the principal, pastor or boss. A proven fundraiser and a guaranteed crowd.',
+    ages:[8,99], setting:'outdoor', dims:[10,12], capacity:'1 dunkee, 1 thrower', energy:'High energy', throughput:'med',
+    events:['school','community','corporate','fundraiser','church','summer'], prefs:['carnival','water'], themes:['carnival','summer'],
+    features:['Crowd-drawing fundraiser','Needs a water fill and level ground','Great photo moments'],
+    idealFor:['Fundraisers','School carnivals','Company picnics'], power:'Garden hose for filling', art:'dunk' },
+  { id:'cotton-candy', name:'Cotton Candy Machine', group:'Carnival', category:'Concessions',
+    desc:'Fresh, fluffy cotton candy made on the spot. A sweet finishing touch to any party.',
+    ages:[1,99], setting:'both', dims:[4,6], capacity:'Serves a crowd', energy:'Relaxed', throughput:'high',
+    events:['birthday','school','community','church','fundraiser','corporate','block','reunion'], prefs:['concessions','carnival'], themes:['carnival','circus','candy','unicorn','rainbow'],
+    features:['Quick to serve','Kid favourite','Supplies can be added to your quote'],
+    idealFor:['Carnivals','Birthday parties','Fundraisers'], power:'1 dedicated outlet', art:'cotton' },
+  { id:'popcorn', name:'Theater Popcorn Machine', group:'Carnival', category:'Concessions',
+    desc:'Classic theater-style popcorn that fills the air with that unmistakable carnival smell.',
+    ages:[1,99], setting:'both', dims:[4,6], capacity:'Serves a crowd', energy:'Relaxed', throughput:'high',
+    events:['school','community','church','fundraiser','corporate','block','reunion','birthday'], prefs:['concessions','carnival'], themes:['movie','carnival','circus'],
+    features:['Theater-style kettle','Great for movie nights','Supplies can be added to your quote'],
+    idealFor:['Movie nights','School events','Fundraisers'], power:'1 dedicated outlet', art:'popcorn' },
+  { id:'snow-cone', name:'Snow Cone Machine', group:'Carnival', category:'Concessions',
+    desc:'Shaved ice with colourful syrups. The coolest treat on a hot summer afternoon.',
+    ages:[1,99], setting:'both', dims:[4,6], capacity:'Serves a crowd', energy:'Relaxed', throughput:'high',
+    events:['summer','school','community','church','block','birthday','fundraiser'], prefs:['concessions','carnival'], themes:['summer','beach','tropical','luau'],
+    features:['Perfect for hot days','Fast service','Supplies can be added to your quote'],
+    idealFor:['Summer parties','Pool parties','Outdoor festivals'], power:'1 dedicated outlet', art:'snowcone' },
+
+  // ---------- GAMING ----------
+  { id:'game-theater', name:'Mobile Video Game Theater', group:'Gaming', category:'Arcade & Gaming Experiences',
+    desc:'A climate-controlled trailer with multiple screens and consoles that parks right at your event.',
+    ages:[7,99], setting:'outdoor', dims:[12,40], capacity:'Up to 16 players', energy:'Moderate', throughput:'med',
+    events:['birthday','graduation','school','corporate','church'], prefs:['gaming'], themes:['gaming','video games','esports','tech'],
+    features:['Multiple screens and consoles','Climate controlled','Parks at your curb or lot'],
+    idealFor:['Tween and teen birthdays','Graduation parties','Rainy-day backup'], power:'Self-contained', art:'gametruck' },
+  { id:'vr-arena', name:'Virtual Reality Arena', group:'Gaming', category:'Interactive Gaming',
+    desc:'Immersive VR experiences with an attendant-friendly setup. A wow moment for teens and adults.',
+    ages:[10,99], setting:'both', dims:[12,12], capacity:'2 players at once', energy:'Moderate', throughput:'low',
+    events:['corporate','graduation','school','birthday'], prefs:['gaming','interactive'], themes:['tech','space','galaxy','gaming','neon'],
+    features:['Immersive headsets','Family-friendly game library','Indoor friendly'],
+    idealFor:['Corporate events','Teen parties','Trade shows'], power:'2 standard outlets', art:'vr' },
+  { id:'retro-arcade', name:'Retro Arcade Bundle', group:'Gaming', category:'Arcade & Gaming Experiences',
+    desc:'A pair of classic-style arcade cabinets packed with retro favourites. Nostalgia for grown-ups, novelty for kids.',
+    ages:[6,99], setting:'indoor', dims:[10,10], capacity:'2\u20134 players', energy:'Relaxed', throughput:'low',
+    events:['corporate','birthday','graduation','wedding','reunion'], prefs:['gaming'], themes:['retro','80s','arcade','neon'],
+    features:['Hundreds of classic games','Free play mode','Great for lounges'],
+    idealFor:['Office parties','Receptions','Indoor venues'], power:'1 standard outlet', art:'arcade' },
+
+  // ---------- OTHER ----------
+  { id:'photo-booth', name:'Open-Air Photo Booth', group:'Other Event Entertainment', category:'Photo Booths',
+    desc:'Instant prints, digital sharing and a box of props. The keepsake guests actually take home.',
+    ages:[3,99], setting:'both', dims:[10,10], capacity:'Groups up to 8', energy:'Relaxed', throughput:'med',
+    events:['wedding','corporate','graduation','birthday','reunion','school','fundraiser'], prefs:['photo'], themes:['any'],
+    features:['Instant prints','Custom print overlay','Props and backdrop options'],
+    idealFor:['Weddings','Corporate events','Graduations'], power:'1 standard outlet', art:'photo' },
+  { id:'led-dance-floor', name:'LED Light-Up Dance Floor', group:'Other Event Entertainment', category:'Party Attractions',
+    desc:'A colour-changing dance floor that turns any room into the party.',
+    ages:[3,99], setting:'both', dims:[16,16], capacity:'20+ dancers', energy:'High energy', throughput:'high',
+    events:['wedding','graduation','corporate','birthday','school'], prefs:['dance'], themes:['disco','neon','glow','70s','80s'],
+    features:['Colour-changing panels','Modular sizes','Indoor or covered outdoor'],
+    idealFor:['School dances','Receptions','Sweet 16s'], power:'1 standard outlet', art:'dance' },
+  { id:'lawn-games', name:'Giant Lawn Games Pack', group:'Other Event Entertainment', category:'Event Add-ons',
+    desc:'Giant tumbling blocks, cornhole and ring toss. Relaxed fun that keeps every age group mingling.',
+    ages:[4,99], setting:'outdoor', dims:[20,30], capacity:'Many at once', energy:'Relaxed', throughput:'high',
+    events:['reunion','corporate','block','wedding','graduation','church'], prefs:['sports','interactive'], themes:['picnic','backyard','rustic'],
+    features:['Multiple games in one pack','All ages','No power required'],
+    idealFor:['Family reunions','Company picnics','Receptions'], power:'None required', art:'lawn' },
+  { id:'generator', name:'Quiet Generator Add-on', group:'Other Event Entertainment', category:'Event Add-ons', addon:true,
+    desc:'Power for inflatables and machines when there are no outlets nearby.',
+    ages:[1,99], setting:'outdoor', dims:[4,4], capacity:'Powers 1\u20132 units', energy:'Relaxed', throughput:'low',
+    events:[], prefs:[], themes:[],
+    features:['Quiet running','Delivered and set up by our crew','Ask the team which units it can power'],
+    idealFor:['Parks without outlets','Fields and lots','Remote venues'], power:'Self-contained', art:'power' },
+];
+
+/* Catalogue access layer — swap internals for a real API later. */
+const CatalogService = {
+  all(){ return CATALOG; },
+  byId(id){ return CATALOG.find(p => p.id === id) || null; },
+  spaceText(p){ return p.dims ? `${p.dims[0]}\u2019 \u00d7 ${p.dims[1]}\u2019 area` : 'Ask our team'; },
+  ageText(p){ return p.ages[1] >= 99 ? `Ages ${p.ages[0]}+` : `Ages ${p.ages[0]}\u2013${p.ages[1]}`; },
+  settingText(p){ return {outdoor:'Outdoor', indoor:'Indoor', both:'Indoor or outdoor'}[p.setting]; },
+};
+
+/* ---------------------------------------------------------------------
+   VOCABULARY
+   --------------------------------------------------------------------- */
+const PREF_LABELS = { inflatables:'Inflatables', slides:'Slides', water:'Water activities', obstacle:'Obstacle courses', interactive:'Interactive games', sports:'Sports & team games', carnival:'Carnival games', gaming:'Gaming', photo:'Photo booth', concessions:'Concessions', softplay:'Soft play', dance:'Dance floor', combination:'A combination' };
+
+const EVENT_LABELS = { birthday:'Birthday party', school:'School event', corporate:'Corporate event', church:'Church event', graduation:'Graduation party', wedding:'Wedding', reunion:'Family reunion', block:'Block party', fundraiser:'Fundraiser', community:'Community event', summer:'Summer party', party:'Party' };
+
+// Ordered: first match wins. "weak" types don't overwrite an event we already know.
+const EVENT_PATTERNS = [
+  ['birthday',   /\b(birthday|b-?day|bday|turning \d+|\d+(?:st|nd|rd|th) party|sweet 16|sweet sixteen)\b/],
+  ['school',     /\b(school|pta|pto|classroom|students|elementary|kindergarten|preschool event|middle school|high school|prom|after-?prom|end of (?:the )?year party)\b/],
+  ['corporate',  /\b(corporate|company|employees?|staff|office|team[- ]building|family day|work picnic|client appreciation|customer appreciation|business)\b/],
+  ['church',     /\b(church|vbs|vacation bible|youth group|ministry|parish|congregation)\b/],
+  ['graduation', /\b(graduation|grad party|graduating)\b/],
+  ['wedding',    /\b(wedding|reception|bridal)\b/],
+  ['reunion',    /\b(reunion)\b/],
+  ['block',      /\b(block party|neighbou?rhood (?:party|event)|hoa)\b/],
+  ['fundraiser', /\b(fundraiser|fund-?raising|charity|benefit)\b/],
+  ['community',  /\b(festival|community event|community day|town|city event|fair\b|(?:a|our|the) carnival(?! games?))\b/, 'weak'],
+  ['summer',     /\b(summer party|pool party|summer bash|splash party|summer camp|backyard bash)\b/, 'weak'],
+  ['party',      /\b(party|celebration|get-?together|event)\b/, 'weak'],
+];
+
+const PREF_PATTERNS = [ // order matters: matched text removed for the first four
+  ['gaming',      /\b(gaming|video ?games?|arcade|vr|virtual reality|game (?:truck|trailer)|e-?sports|xbox|playstation|nintendo|consoles?)\b/g, true],
+  ['carnival',    /\b(carnival(?: games?)?|midway(?: games?)?|dunk(?: tank)?|fair games?)\b/g, true],
+  ['sports',      /\b(sports?(?: games?)?|soccer|basketball|football|baseball|athletic|team games?|relays?|field day)\b/g, true],
+  ['concessions', /\b(concessions?|cotton candy|popcorn|snow ?cones?|shaved ice|treats|snacks)\b/g, true],
+  ['water',       /\b(water|splash|wet|soak(?:ing)?|pool)\b/g],
+  ['inflatables', /\b(inflatables?|bounce|bouncy|bouncers?|jump(?:er|ers|ing)?|moon ?walks?|bounce house)\b/g],
+  ['slides',      /\bslides?\b/g],
+  ['obstacle',    /\b(obstacles?(?: course)?|ninja|race course)\b/g],
+  ['photo',       /\b(photo ?booth|photos?|pictures|selfies?)\b/g],
+  ['softplay',    /\b(soft play|toddler (?:area|zone|play))\b/g],
+  ['dance',       /\b(dance floor|dance|dancing|dj)\b/g],
+  ['interactive', /\b(interactive|games?|challenges?|competitive|competition|activities)\b/g],
+];
+
+const AGE_WORDS = [
+  [/\b(babies|infants?)\b/, [0,2]], [/\btoddlers?\b/, [1,4]], [/\b(preschool(?:ers)?|pre-k)\b/, [3,5]],
+  [/\b(little ones|little kids|young kids|younger kids|small kids)\b/, [3,6]],
+  [/\b(elementary|grade school|k-5|k through 5)\b/, [5,11]], [/\btweens?\b/, [10,12]],
+  [/\bmiddle school(?:ers)?\b/, [11,14]], [/\b(teens?|teenagers?|high school(?:ers)?|youth group)\b/, [13,18]],
+  [/\b(college|university)\b/, [18,24]], [/\badults?(?: only)?\b/, [18,99]],
+  [/\b(all ages|mixed ages|every age|kids and adults|adults and kids|whole family|families|family-friendly|family friendly)\b/, [2,99]],
+];
+
+const THEMES = ['tropical','luau','hawaiian','princess','superhero','jungle','safari','under the sea','mermaid','pirate','dinosaur','unicorn','rainbow','outer space','galaxy','western','rodeo','winter wonderland','camo','neon','glow','sports','ninja','carnival','circus','beach','retro','80s','disco','gaming','knight','medieval','fairy','candy','olympics','movie'];
+
+const MONTHS = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+const MONTH_RX = '(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)';
+function monthIndex(s){ s = s.slice(0,3); return ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(s); }
+const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+
+/* ---------------------------------------------------------------------
+   CONTEXT
+   --------------------------------------------------------------------- */
+function createContext(){
+  return {
+    eventType:null, eventLabel:null, guests:null, guestsLabel:null, hasKids:null,
+    ageMin:null, ageMax:null, ageLabel:null, setting:null, venueName:null,
+    spaceDims:null, spaceSize:null, spaceLabel:null, date:null, dateISO:null, dateMonth:null,
+    prefs:[], negatives:[], budget:null, theme:null, duration:null, special:[],
+    hot:false, exciting:false, calm:false,
+    asked:{}, lastAsked:null, turns:0, recommended:null, shownIds:[], history:[],
+  };
+}
+
+/* ---------------------------------------------------------------------
+   SIGNAL EXTRACTION  (simulated NLU)
+   --------------------------------------------------------------------- */
+function normalizeNumbers(t){
+  const units = {one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9};
+  const tens = {twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90};
+  t = t.replace(/\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[- ](one|two|three|four|five|six|seven|eight|nine)\b/g, (m,a,b)=> String(tens[a]+units[b]));
+  const words = {'a couple dozen':24,'a few dozen':36,'a couple hundred':200,'a few hundred':300,'a hundred':100,'one hundred':100,'two hundred':200,'three hundred':300,'five hundred':500,'a thousand':1000,'a dozen':12,'dozen':12,
+    ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19,twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90};
+  for(const [w,n] of Object.entries(words)) t = t.replace(new RegExp(`\\b${w}\\b`,'g'), String(n));
+  return t;
+}
+
+function toISO(mi, day){
+  const now = new Date(); let y = now.getFullYear();
+  let d = new Date(y, mi, day);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if(d < today) d = new Date(y+1, mi, day);
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+
+function extractSignals(raw, ctx){
+  let t = ' ' + normalizeNumbers(raw.toLowerCase()).replace(/[\u2019\u2018]/g,"'").replace(/[\u2013\u2014]/g,'-') + ' ';
+  const s = { prefs:new Set(), negatives:new Set(), special:new Set(), intent:{} };
+  let m;
+
+  // --- intents ---
+  if(/^\s*(start over|reset|restart|new event|clear( chat)?|begin again)\b/.test(t)) s.intent.reset = true;
+  if(/\b(recommend|suggest|suggestions?|what (?:do|would|should|can) (?:you|i|we)|show me|ideas?|options|what works|what'?s good|just pick|surprise me|go ahead)\b/.test(t)) s.intent.recommend = true;
+  if(/\b(more options|something else|other options|anything else|different (?:options|ones|ideas)|alternatives?|show (?:me )?more|what else)\b/.test(t)) s.intent.more = true;
+  if(/\b(price|prices|pricing|cost|costs|how much|rates?|fees?|expensive|cheap(?:er|est)?)\b/.test(t)) s.intent.price = true;
+  if(/\b(request (?:a |my )?quote|get (?:a )?quote|send (?:me )?(?:a )?quote|book (?:it|this|now)|reserve)\b/.test(t)) s.intent.quote = true;
+  if(/\b(available|availability|booked up|open on|still open)\b/.test(t)) s.intent.availability = true;
+  if(/\b(deliver(?:y)?|set ?up|setup|tear ?down|install|who sets)\b/.test(t) && /\?|do you|does|how|who|include/.test(t)) s.intent.service = true;
+  if(/\b(safe|safety|insur(?:ed|ance)|clean(?:ed)?|sanitiz)\w*/.test(t) && /\?|are|is|do you|how/.test(t)) s.intent.safety = true;
+  if(/\b(rain|weather|wind|windy|storm)\b/.test(t)) s.intent.weather = true;
+  if(/\b(service area|how far|do you (?:go|deliver|travel)|where are you|what areas?)\b/.test(t)) s.intent.area = true;
+  if(/^\s*(thanks|thank you|thx|ty|cheers|awesome|perfect|great|cool|love it|amazing)[!. ]*$/.test(t)) s.intent.thanks = true;
+  if(/^\s*(hi|hello|hey|hiya|howdy|yo|good (?:morning|afternoon|evening))[!. ,]*$/.test(t)) s.intent.greeting = true;
+  if(/\b(build|create|put together|make)\b.{0,20}\b(package|bundle)\b/.test(t)) s.intent.package = true;
+  if(/^\s*(not sure|no idea|don'?t know|dunno|skip|pass|no preference|unsure|either|whatever|doesn'?t matter)\b/.test(t)) s.intent.skip = true;
+  s.intent.question = /\?|^\s*(what|how|can|could|do|does|is|are|will|would|tell me)\b/.test(t);
+
+  // --- negatives: "no water", "not inflatables" ---
+  const negRx = /\b(?:no|not|without|skip(?:ping)?|don'?t want|do not want|avoid|except|nothing)\s+(?:any\s+|the\s+)?(water|wet|inflatables?|bounce(?: houses?)?|carnival|gaming|video games|concessions|food|photo ?booth|sports|dancing|dance floor)\b/g;
+  while((m = negRx.exec(t))){
+    const w = m[1];
+    const key = /water|wet/.test(w)?'water':/inflat|bounce/.test(w)?'inflatables':/carnival/.test(w)?'carnival':/gam|video/.test(w)?'gaming':/conc|food/.test(w)?'concessions':/photo/.test(w)?'photo':/sport/.test(w)?'sports':'dance';
+    s.negatives.add(key);
+  }
+  if(/\bno (?:power|electric(?:ity)?|outlets?)\b|without (?:power|electricity|outlets)|no access to power|generator/.test(t)) s.special.add('No power on site');
+  t = t.replace(negRx, ' ');
+  t = t.replace(/\b(?:no|without) (?:power|electric(?:ity)?|outlets?)\b/g,' ');
+
+  // --- duration ---
+  if((m = t.match(/(\d{1,2}(?:\.\d)?)\s*(?:-|to)\s*(\d{1,2})\s*(?:hours?|hrs?)\b/))){ s.duration = `${m[1]}\u2013${m[2]} hours`; t = t.replace(m[0],' '); }
+  else if((m = t.match(/(\d{1,2}(?:\.\d)?)\s*(?:-\s*)?(?:hours?|hrs?)\b/))){ s.duration = `${m[1]} hour${m[1]==='1'?'':'s'}`; t = t.replace(m[0],' '); }
+  else if(/\b(all[- ]day|full[- ]day)\b/.test(t)) s.duration = 'All day';
+  else if(/\bhalf[- ]day\b/.test(t)) s.duration = 'Half day';
+
+  // --- budget ---
+  if((m = t.match(/\$\s?(\d[\d,]*(?:\.\d+)?)\s*(k\b)?/))){ let n = parseFloat(m[1].replace(/,/g,'')); if(m[2]) n*=1000; s.budget = `Around $${Math.round(n).toLocaleString('en-US')}`; t = t.replace(m[0],' '); }
+  else if((m = t.match(/budget\D{0,20}?(\d[\d,]*)\s*(k\b)?/))){ let n = parseFloat(m[1].replace(/,/g,'')); if(m[2]) n*=1000; s.budget = `Around $${Math.round(n).toLocaleString('en-US')}`; t = t.replace(m[0],' '); }
+  else if((m = t.match(/(\d[\d,]*)\s*(dollars|bucks)\b/))){ s.budget = `Around $${parseInt(m[1].replace(/,/g,''),10).toLocaleString('en-US')}`; t = t.replace(m[0],' '); }
+  else if(/\b(tight budget|on a budget|affordable|inexpensive|low budget|budget[- ]friendly|not too expensive|keep costs? down)\b/.test(t)) s.budget = 'Budget-conscious';
+
+  // --- date ---
+  let dm;
+  if((dm = t.match(new RegExp(`\\b${MONTH_RX}\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?\\b`)))){
+    const mi = monthIndex(dm[1]); const d = parseInt(dm[2],10);
+    if(mi>=0 && d>=1 && d<=31){ s.date = `${cap(MONTHS[mi])} ${d}`; s.dateISO = toISO(mi,d); s.dateMonth = mi; t = t.replace(dm[0],' '); }
+  } else if((dm = t.match(new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?${MONTH_RX}\\b`)))){
+    const mi = monthIndex(dm[2]); const d = parseInt(dm[1],10);
+    if(mi>=0 && d>=1 && d<=31){ s.date = `${cap(MONTHS[mi])} ${d}`; s.dateISO = toISO(mi,d); s.dateMonth = mi; t = t.replace(dm[0],' '); }
+  } else if((dm = t.match(/\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/))){
+    const mi = parseInt(dm[1],10)-1, d = parseInt(dm[2],10);
+    if(mi>=0 && mi<12 && d>=1 && d<=31){ s.date = `${cap(MONTHS[mi])} ${d}`; s.dateISO = toISO(mi,d); s.dateMonth = mi; t = t.replace(dm[0],' '); }
+  } else if((dm = t.match(/\b(this|next) (weekend|saturday|sunday|friday|week|month)\b|\btomorrow\b/))){
+    s.date = cap(dm[0].trim());
+  } else if((dm = t.match(new RegExp(`\\b(?:in|during|this|next|early|late|mid)[- ]${MONTH_RX}\\b`)))){
+    const mi = monthIndex(dm[1]); if(mi>=0){ s.date = `${cap(MONTHS[mi])} (date TBC)`; s.dateMonth = mi; }
+  } else if((dm = t.match(/\b(?:this|next|in the|in) (spring|summer|fall|autumn|winter)\b/))){
+    s.date = `${cap(dm[1])} (date TBC)`; if(dm[1]==='summer') s.hot = true;
+  }
+
+  // --- space dimensions ---
+  if((m = t.match(/(\d{2,3})\s*(?:'|ft|feet|foot)?\s*(?:x|by|\u00d7)\s*(\d{2,3})\s*(?:'|ft|feet|foot)?/))){
+    s.spaceDims = [parseInt(m[1],10), parseInt(m[2],10)]; t = t.replace(m[0],' ');
+  }
+  if(/\b(large|big|huge|lots of|plenty of|wide|open|massive|giant)\s+(?:(?:open|outdoor|indoor|grassy|flat)\s+)?(space|area|field|yard|backyard|lawn|lot|grounds|park)\b|\bacres?\b|\b(?:football|soccer|baseball) field\b|\bopen field\b/.test(t)) s.spaceSize = 'Large';
+  else if(/\b(small|tight|limited|narrow|tiny|compact)\s+(space|area|yard|backyard|room|lot|patio)\b/.test(t)) s.spaceSize = 'Compact';
+  else if(/\b(medium|average|decent|normal)[- ]sized?\s+(space|area|yard|backyard|room)\b/.test(t)) s.spaceSize = 'Medium';
+
+  // --- guests ---
+  const NOUNS = 'kids|children|child|guests|people|students|employees|staff|attendees|adults|teens|teenagers|families|campers|folks|persons|ppl|members|participants|youth|boys|girls|visitors|attendees|of us|little ones|toddlers|grads';
+  const KID_NOUNS = /kids|children|child|students|campers|boys|girls|little ones|toddlers|youth|teens|teenagers/;
+  if((m = t.match(new RegExp(`(\\d{1,4})\\s*(?:-|to)\\s*(\\d{1,4})\\s*\\+?\\s*(${NOUNS})\\b`)))){
+    const lo = parseInt(m[1],10), hi = parseInt(m[2],10);
+    s.guests = hi; s.guestNoun = m[3]; s.guestsLabel = `${lo}\u2013${hi} ${nounLabel(m[3], hi)}`; t = t.replace(m[0],' ');
+  } else if((m = t.match(new RegExp(`(\\d{1,4})\\s*(\\+)?\\s*(?:or so\\s+)?(?:more\\s+)?(${NOUNS})\\b`)))){
+    let n = parseInt(m[1],10); const noun = m[3];
+    if(noun === 'families'){ s.guests = n*3; s.guestsLabel = `${n} families (~${n*3} guests)`; s.hasKids = true; }
+    else { s.guests = n; s.guestsLabel = `${n}${m[2]?'+':''} ${nounLabel(noun, n)}`; }
+    s.guestNoun = noun; t = t.replace(m[0],' ');
+  } else if((m = t.match(/\b(?:around|about|roughly|approx(?:imately)?\.?|~|maybe|like|expecting|up to|over)\s*(\d{2,4})\b/)) && !/\b(year|yr|ft|feet|foot|hour)/.test(t.slice(t.indexOf(m[0]) + m[0].length, t.indexOf(m[0]) + m[0].length + 10))){
+    s.guests = parseInt(m[1],10); s.guestsLabel = `About ${s.guests} guests`; t = t.replace(m[0],' ');
+  }
+  if(s.guestNoun && KID_NOUNS.test(s.guestNoun)) s.hasKids = true;
+  if(/\b(kids|children|child|little ones|toddlers|my son|my daughter|grandkids)\b/.test(t)) s.hasKids = true;
+  if(/\b(adults only|no kids|grown-?ups only|21\+)\b/.test(t)) s.hasKids = false;
+
+  // --- ages ---
+  const ageRanges = [];
+  if((m = t.match(/(?:\b(?:ages?|aged|between)\s*)?\b(\d{1,2})\s*(?:-|to|through|thru|and)\s*(\d{1,2})\b(\s*(?:years?|yrs?|y\/?o|year[- ]olds?))?/))){
+    const a = parseInt(m[1],10), b = parseInt(m[2],10);
+    const ageish = /\b(ages?|aged|years?|yrs?|y\/?o|olds?|grade)\b/.test(t) || ctx.lastAsked === 'ages';
+    const andOk = !/\band\b/.test(m[0]) || /between/.test(m[0]);
+    if(a < b && b <= 99 && andOk && (ageish || b <= 18)){ ageRanges.push([a,b]); t = t.replace(m[0],' '); }
+  }
+  if((m = t.match(/\b(\d{1,2})\s*(?:-\s*)?(?:years?|yrs?)[\s-]*olds?\b/))){ const n = parseInt(m[1],10); ageRanges.push([n,n]); }
+  if((m = t.match(/\bturning (\d{1,2})\b|\b(\d{1,2})(?:st|nd|rd|th) birthday\b/))){ const n = parseInt(m[1]||m[2],10); ageRanges.push([n,n]); s.birthdayAge = n; s.hasKids = n < 18 ? true : s.hasKids; }
+  if((m = t.match(/\bunder (\d{1,2})\b/))){ ageRanges.push([2, parseInt(m[1],10)]); }
+  if((m = t.match(/\b(\d)(?:st|nd|rd|th) grade(?:rs)?\b/))){ const g = parseInt(m[1],10); ageRanges.push([g+5,g+6]); }
+  for(const [rx, r] of AGE_WORDS){ if(rx.test(t)) ageRanges.push(r); }
+  if(s.guestNoun && /^teen/.test(s.guestNoun)) ageRanges.push([13,18]);
+  if(s.guestNoun === 'toddlers') ageRanges.push([1,4]);
+  if(!ageRanges.length && /sweet (?:16|sixteen)/.test(raw.toLowerCase())) ageRanges.push([14,18]);
+  if(!ageRanges.length && ctx.lastAsked === 'ages' && (m = t.match(/\b(\d{1,2})\b/))){ const n = parseInt(m[1],10); if(n<=18) ageRanges.push([n,n]); }
+  if(ageRanges.length){
+    s.ageMin = Math.min(...ageRanges.map(r=>r[0])); s.ageMax = Math.max(...ageRanges.map(r=>r[1]));
+    if(s.ageMax < 18) s.hasKids = true;
+  }
+  if(/\bmostly adults\b/.test(t) && s.ageMin == null){ s.ageMin = 18; s.ageMax = 99; }
+
+  // lone number answering the guest question
+  if(s.guests == null && ctx.lastAsked === 'guests' && ageRanges.length === 0 && (m = t.match(/\b(\d{1,4})\b/))){
+    s.guests = parseInt(m[1],10); s.guestsLabel = `About ${s.guests} guests`;
+  }
+
+  // --- venue / setting ---
+  const tv = t.replace(/field day/g,' ');
+  const OUT = /\b(outdoors?|outside|open[- ]air|back ?yard|front yard|yard|park|lawn|fields?|grass|parking lot|driveway|playground|pavilion|farm|pool|beach|patio|campground|school grounds)\b/;
+  const IN  = /\b(indoors?|inside|gym(?:nasium)?|halls?|ballroom|basement|warehouse|arena|community cent(?:er|re)|convention|cafeteria|auditorium|office building|banquet)\b/;
+  const hasOut = OUT.test(tv), hasIn = IN.test(tv);
+  if((hasOut && hasIn) || (ctx.lastAsked === 'venue' && /\bboth\b|\beither\b/.test(tv))) s.setting = 'both';
+  else if(hasOut) s.setting = 'outdoor';
+  else if(hasIn) s.setting = 'indoor';
+  const VENUES = [
+    ['Backyard', /\b(back ?yard|our yard|the yard|front yard)\b/], ['School grounds', /\bschool (?:field|grounds|playground|parking lot|yard|gym)|playground\b/],
+    ['Park', /\bpark\b(?!ing)/], ['Gym', /\bgym(?:nasium)?\b/], ['Community center', /community cent(?:er|re)/],
+    ['Church grounds', /\b(?:at|in) (?:the |our )?church\b|church (?:hall|lot|grounds|basement|gym|parking lot)/],
+    ['Parking lot', /parking lot/], ['Event hall', /\b(?:banquet|event|reception|church) hall\b|ballroom|\bhall\b/],
+    ['Office campus', /\b(office|campus|headquarters|hq|company grounds)\b/], ['Open field', /\bfield\b/],
+    ['Driveway', /\bdriveway\b/], ['Pavilion', /\bpavilion|shelter house\b/], ['Warehouse', /\bwarehouse\b/],
+    ['Pool area', /\bpool\b/], ['Farm', /\b(farm|barn)\b/], ['Beach', /\bbeach\b/],
+  ];
+  for(const [label, rx] of VENUES){ if(rx.test(tv)){ s.venueName = label; break; } }
+  if(/\b(concrete|asphalt|pavement|blacktop|parking lot)\b/.test(t)) s.special.add('Hard surface (asphalt/concrete)');
+  if(/\b(hill|hilly|slope|sloped|uneven)\b/.test(t)) s.special.add('Sloped or uneven ground');
+  if(/\b(accessible|accessibility|wheelchair|special needs|sensory|autism|autistic|disabilit)\w*/.test(t)) s.special.add('Accessibility / sensory needs');
+  if(/\b(allerg\w*|nut[- ]free|gluten)\b/.test(t)) s.special.add('Allergy considerations');
+  if(/\b(low ceiling|ceiling)\b/.test(t)) s.special.add('Ceiling height limit');
+  if(/\b(narrow gate|gate|stairs|steps|elevator)\b/.test(t)) s.special.add('Tight access route (gate/stairs)');
+  if(/\b(shade|no shade)\b/.test(t)) s.special.add('Shade needed');
+  if(/\b(attendant|staffed|someone to run|supervis\w*)\b/.test(t)) s.special.add('Attendant requested');
+
+  // --- mood ---
+  if(/\b(hot|heat|summer|sunny|cool (?:off|down)|july|august)\b/.test(t)) s.hot = true;
+  if(/\b(exciting|excitement|thrill\w*|high[- ]energy|active|wow|epic|adventur\w*|energetic|big hit|showstopper|memorable)\b/.test(t)) s.exciting = true;
+  if(/\b(calm|low[- ]key|relaxed|quiet|chill|mellow)\b/.test(t)) s.calm = true;
+
+  // --- theme ---
+  if((m = t.match(/\b([a-z]+(?: [a-z]+)?)[- ]themed?\b/))){ const cand = m[1].replace(/^(a|an|the|our|my|its|it's)\s+/,''); if(!/^(a|the|no|any|party|event|some|of)$/.test(cand)) s.theme = cand; }
+  if(!s.theme){ for(const th of THEMES){ if(new RegExp(`\\b${th}\\b`).test(t) && /theme|party|birthday|style|vibe|decor/.test(t) && !(th==='sports' && !/theme/.test(t)) && !(th==='carnival' && !/theme/.test(t))){ s.theme = th; break; } } }
+
+  // --- preferences ---
+  let tp = t;
+  for(const [key, rx, strip] of PREF_PATTERNS){
+    rx.lastIndex = 0;
+    if(rx.test(tp)){ s.prefs.add(key); if(strip){ rx.lastIndex = 0; tp = tp.replace(rx,' '); } }
+  }
+  if(s.prefs.has('sports') && /team games?|relays?|field day/.test(t)) s.prefs.add('interactive');
+  if(/\b(combination|combo of|a mix|mix of|mixture|variety|bit of everything|little of everything|all of the above|all of them|everything|a little of each|bit of each)\b/.test(t) || (ctx.lastAsked === 'pref' && /\b(both|all)\b/.test(t))) s.prefs.add('combination');
+  // "pool party" is an event cue; "pool" as a venue shouldn't force water unless it's a party context
+  // Event type
+  for(const [key, rx, weak] of EVENT_PATTERNS){
+    if(rx.test(t)){ s.eventType = key; s.eventWeak = !!weak; break; }
+  }
+  if(s.eventType === 'school' && /carnival/.test(t)) s.eventLabel = 'School carnival';
+  else if(s.eventType === 'school' && /field day/.test(t)) s.eventLabel = 'School field day';
+  else if(s.eventType === 'corporate' && /family day/.test(t)) s.eventLabel = 'Corporate family day';
+  else if(s.eventType === 'corporate' && /picnic/.test(t)) s.eventLabel = 'Company picnic';
+  else if(s.eventType === 'community' && /carnival/.test(t)) s.eventLabel = 'Community carnival';
+  else if(s.eventType === 'community' && /festival/.test(t)) s.eventLabel = 'Community festival';
+  else if(s.eventType === 'summer' && /pool/.test(t)) s.eventLabel = 'Pool party';
+  else if(s.eventType === 'church' && /vbs|vacation bible/.test(t)) s.eventLabel = 'Vacation Bible School';
+  else if(s.eventType === 'birthday' && /sweet 16|sweet sixteen/.test(t)) s.eventLabel = 'Sweet 16';
+  if(s.eventType === 'summer' || s.eventType === 'party' && /summer/.test(t)){ s.eventType = 'summer'; s.hot = true; }
+  if(s.eventType === 'summer' && !s.eventLabel) s.eventLabel = 'Summer party';
+
+  return s;
+}
+
+function nounLabel(noun, n){
+  if(/kid|child|little/.test(noun)) return n === 1 ? 'child' : 'children';
+  if(noun === 'ppl' || noun === 'persons' || noun === 'folks' || noun === 'of us') return 'guests';
+  return noun;
+}
+
+/* Merge extracted signals into the running conversation context. Returns the list of changed keys. */
+function applySignals(ctx, s){
+  const changed = [];
+  const set = (k, v) => { if(v != null && v !== '' && ctx[k] !== v){ ctx[k] = v; changed.push(k); } };
+  if(s.eventType && !(s.eventWeak && ctx.eventType)){
+    if(!(s.eventType === 'party' && ctx.eventType)){
+      const typeChanged = ctx.eventType !== s.eventType;
+      set('eventType', s.eventType);
+      if(typeChanged || s.eventLabel) set('eventLabel', s.eventLabel || EVENT_LABELS[s.eventType]);
+    }
+  } else if(s.eventLabel && ctx.eventType === s.eventType){ set('eventLabel', s.eventLabel); }
+  if(s.guests != null){ set('guests', s.guests); set('guestsLabel', s.guestsLabel); }
+  if(s.hasKids != null) set('hasKids', s.hasKids);
+  if(s.ageMin != null){
+    ctx.ageMin = s.ageMin; ctx.ageMax = s.ageMax;
+    const label = ageLabel(s.ageMin, s.ageMax);
+    set('ageLabel', label);
+  }
+  set('setting', s.setting); set('venueName', s.venueName);
+  if(s.spaceDims){ ctx.spaceDims = s.spaceDims; const area = s.spaceDims[0]*s.spaceDims[1]; set('spaceSize', area < 900 ? 'Compact' : area < 3000 ? 'Medium' : 'Large'); set('spaceLabel', `${s.spaceDims[0]}\u2019 \u00d7 ${s.spaceDims[1]}\u2019`); }
+  else if(s.spaceSize){ set('spaceSize', s.spaceSize); set('spaceLabel', {Large:'Large open space', Compact:'Compact space', Medium:'Medium-sized space'}[s.spaceSize]); }
+  set('date', s.date); if(s.dateISO) ctx.dateISO = s.dateISO; if(s.dateMonth != null) ctx.dateMonth = s.dateMonth;
+  set('budget', s.budget); set('duration', s.duration); set('theme', s.theme);
+  for(const n of s.negatives){ if(!ctx.negatives.includes(n)){ ctx.negatives.push(n); changed.push('negatives'); } ctx.prefs = ctx.prefs.filter(p => p !== n && !(n==='inflatables' && p==='slides')); }
+  for(const p of s.prefs){ if(!ctx.prefs.includes(p) && !ctx.negatives.includes(p)){ ctx.prefs.push(p); if(!changed.includes('prefs')) changed.push('prefs'); } }
+  for(const sp of s.special){ if(!ctx.special.includes(sp)){ ctx.special.push(sp); changed.push('special'); } }
+  if(s.hot && !ctx.hot){ ctx.hot = true; changed.push('hot'); }
+  if(s.exciting && !ctx.exciting){ ctx.exciting = true; changed.push('exciting'); }
+  if(s.calm && !ctx.calm){ ctx.calm = true; changed.push('calm'); }
+  // Inferences
+  if(ctx.eventType === 'school' && ctx.hasKids == null) ctx.hasKids = true;
+  if(ctx.eventType === 'birthday' && ctx.hasKids == null && ctx.ageMax == null) ctx.hasKids = true;
+  if(ctx.dateMonth != null && [5,6,7].includes(ctx.dateMonth)) ctx.hot = true;
+  return changed;
+}
+
+function ageLabel(a, b){
+  if(b >= 99 && a <= 3) return 'All ages';
+  if(b >= 99) return a >= 18 ? 'Adults' : `${a}+ (incl. adults)`;
+  if(a === b) return `Around ${a}`;
+  return `${a}\u2013${b}`;
+}
+
+/* ---------------------------------------------------------------------
+   RECOMMENDATION ENGINE  (multi-signal scoring)
+   --------------------------------------------------------------------- */
+const EVENT_BOOSTS = {
+  birthday:   { inflatables:2, slides:1, interactive:1, softplay:1 },
+  school:     { obstacle:3, interactive:2, carnival:3, slides:1 },
+  corporate:  { interactive:3, sports:3, gaming:1, photo:1 },
+  church:     { inflatables:1, carnival:2, obstacle:1 },
+  graduation: { photo:2, gaming:2, interactive:1, dance:1 },
+  wedding:    { photo:3, dance:3, gaming:1 },
+  reunion:    { sports:2, inflatables:1 },
+  block:      { inflatables:2, water:1, concessions:1 },
+  fundraiser: { carnival:3, obstacle:2, slides:1 },
+  community:  { carnival:3, concessions:2, interactive:2, slides:2 },
+  summer:     { water:4, concessions:1 },
+  party:      { inflatables:1, interactive:1 },
+};
+
+function scoreProduct(p, ctx){
+  if(p.addon) return null;
+  const why = [];
+  let s = 0;
+  // Hard filters
+  if(ctx.setting === 'indoor' && p.setting === 'outdoor') return null;
+  if(ctx.negatives.some(n => p.prefs[0] === n || (n === 'water' && p.prefs.includes('water')) || (n === 'inflatables' && p.prefs.includes('inflatables') && p.group === 'Inflatables'))) return null;
+  const teens = ctx.ageMin != null && ctx.ageMin >= 12;
+  const young = ctx.ageMax != null && ctx.ageMax <= 6;
+  if(ctx.ageMin != null){
+    const overlap = Math.min(p.ages[1], ctx.ageMax) - Math.max(p.ages[0], ctx.ageMin);
+    if(overlap < 0) return null;
+    if(teens && p.ages[1] <= 12) return null;
+    if(ctx.ageMin >= p.ages[0] && ctx.ageMax <= p.ages[1]){ s += 5; why.push({w:3, t: ctx.ageLabel === 'All ages' ? 'Great for all ages' : ctx.ageLabel === 'Adults' ? 'Built for grown-ups too' : `Right for ages ${ctx.ageLabel.replace('Around ','~')}`}); }
+    else s += 2;
+    if(p.ages[0] > ctx.ageMin + 1 && ctx.ageMax < 18) s -= 3;
+  }
+  if(ctx.hasKids === false && p.ages[1] < 99) return null;
+  if(ctx.spaceDims && p.dims){
+    const [W,L] = ctx.spaceDims, [w,l] = p.dims, c = 5; // 5 ft safety clearance
+    const fits = (w + c <= W && l + c <= L) || (w + c <= L && l + c <= W);
+    if(!fits) return null;
+    why.push({w:1, t:'Fits your space with room to spare'});
+  }
+  // Event type
+  if(ctx.eventType && p.events.includes(ctx.eventType)){ s += 3; why.push({w:2, t:`A favourite at ${pluralEvent(ctx)}`}); }
+  const boost = ctx.eventType ? EVENT_BOOSTS[ctx.eventType] || {} : {};
+  s += Math.max(0, ...p.prefs.map(k => boost[k] || 0));
+  // Stated preferences
+  const hits = p.prefs.filter(k => ctx.prefs.includes(k));
+  if(hits.length){ s += Math.min(8, hits.length * 4); why.push({w:4, t:`Matches your interest in ${PREF_LABELS[hits[0]].toLowerCase()}`}); }
+  if(ctx.prefs.includes('combination') && ['inflatables','interactive','carnival','sports','slides','obstacle'].includes(p.prefs[0])) s += 1;
+  // Water only when it makes sense
+  if(p.prefs.includes('water')){
+    if(ctx.prefs.includes('water')) s += 1; else if(ctx.hot || ctx.eventType === 'summer'){ s += 2; why.push({w:2, t:'Keeps everyone cool on a hot day'}); } else s -= 4;
+  }
+  // Concessions & niche add-ons are supporting acts unless asked for
+  if(p.prefs[0] === 'concessions' && !ctx.prefs.includes('concessions')) s -= ['community','school','fundraiser','summer'].includes(ctx.eventType) ? 1 : 3;
+  if(['photo','dance'].includes(p.prefs[0]) && !ctx.prefs.includes(p.prefs[0]) && !['wedding','graduation','corporate'].includes(ctx.eventType)) s -= 3;
+  if(p.prefs[0] === 'softplay' && !young && !ctx.prefs.includes('softplay')) s -= 4;
+  if(p.prefs[0] === 'gaming' && !ctx.prefs.includes('gaming') && !teens) s -= 2;
+  // Age tone
+  if(teens){ if(['interactive','sports','gaming'].some(k => p.prefs.includes(k))){ s += 3; why.push({w:3, t:'Popular with teens'}); } if(p.category === 'Bounce Houses') s -= 4; }
+  if(young && (p.prefs[0] === 'softplay' || p.category === 'Bounce Houses')){ s += 2; why.push({w:2, t:'Sized for little ones'}); }
+  // Crowd size
+  if(ctx.guests >= 100){ if(p.throughput === 'high'){ s += 2; why.push({w:3, t:'Moves big crowds quickly'}); } if(p.throughput === 'low') s -= 1; }
+  if(ctx.guests && ctx.guests <= 20 && p.dims && p.dims[1] > 40) s -= 1;
+  // Space & venue
+  if(ctx.spaceSize === 'Compact' && p.dims && p.dims[0]*p.dims[1] > 500) s -= 3;
+  if(ctx.spaceSize === 'Large' && p.dims && p.dims[0]*p.dims[1] > 450){ s += 1; why.push({w:1, t:'Makes the most of a large space'}); }
+  if(ctx.setting === 'indoor' && p.setting !== 'outdoor') why.push({w:2, t:'Works indoors'});
+  if(ctx.setting === 'outdoor' && p.setting === 'outdoor') why.push({w:1, t:'Built for outdoor setups'});
+  if(ctx.special.includes('Hard surface (asphalt/concrete)') && p.group === 'Inflatables') why.push({w:0, t:'Can be set up on hard surfaces with sandbags'});
+  // Mood & theme
+  if(ctx.exciting && p.energy === 'High energy'){ s += 2; why.push({w:2, t:'High-energy wow factor'}); }
+  if(ctx.calm && p.energy === 'Relaxed') s += 2;
+  if(ctx.calm && p.energy === 'High energy') s -= 1;
+  if(ctx.theme && p.themes.some(th => ctx.theme.includes(th) || th.includes(ctx.theme))){ s += 3; why.push({w:4, t:`Fits your ${ctx.theme} theme`}); }
+  // Budget: favour versatile, high-capacity items
+  if(ctx.budget === 'Budget-conscious' && p.throughput === 'high') s += 1;
+
+  why.sort((a,b) => b.w - a.w);
+  return { p, s, why: why.slice(0,2).map(x => x.t) };
+}
+
+function pluralEvent(ctx){
+  const map = { birthday:'birthday parties', school:'school events', corporate:'corporate events', church:'church events', graduation:'graduation parties', wedding:'weddings', reunion:'family reunions', block:'block parties', fundraiser:'fundraisers', community:'community events', summer:'summer parties', party:'parties' };
+  return map[ctx.eventType] || 'events like yours';
+}
+
+function recommend(ctx, opts = {}){
+  const exclude = new Set(opts.exclude || []);
+  const scored = CatalogService.all().map(p => scoreProduct(p, ctx)).filter(Boolean).filter(r => !exclude.has(r.p.id)).sort((a,b) => b.s - a.s);
+  const picks = [];
+  const groupCount = {};
+  const add = r => { picks.push(r); groupCount[r.p.group] = (groupCount[r.p.group]||0) + 1; };
+  const usedCat = () => new Set(picks.map(r => r.p.category));
+  // 1) cover each stated preference with its best primary match
+  for(const pref of ctx.prefs.filter(k => k !== 'combination')){
+    if(picks.length >= 3) break;
+    const r = scored.find(x => x.p.prefs[0] === pref && !picks.includes(x)) || scored.find(x => x.p.prefs.includes(pref) && !picks.includes(x));
+    if(r && !usedCat().has(r.p.category)) add(r);
+  }
+  // 2) fill with diversity: new category, max 2 per group, prefer a new group if close in score
+  while(picks.length < 4){
+    const pool = scored.filter(x => !picks.includes(x) && !usedCat().has(x.p.category) && (groupCount[x.p.group]||0) < 2);
+    if(!pool.length) break;
+    const best = pool[0];
+    const novel = pool.find(x => !groupCount[x.p.group] && x.s >= best.s - 3 && x.s > 0);
+    add(novel || best);
+  }
+  // 3) power add-on for sites without outlets
+  if(ctx.special.includes('No power on site') && ctx.setting !== 'indoor'){
+    const gen = CatalogService.byId('generator');
+    if(picks.length >= 4) picks.pop();
+    picks.push({ p:gen, s:0, why:['You mentioned there\u2019s no power on site'] });
+  }
+  picks.sort((a,b) => (b.p.addon?-1:0) - (a.p.addon?-1:0) || b.s - a.s);
+  return picks;
+}
+
+/* ---------------------------------------------------------------------
+   CONVERSATION POLICY
+   --------------------------------------------------------------------- */
+const CORE_FIELDS = ['eventType','guests','ages','venue','pref'];
+function isKnown(ctx, f){
+  switch(f){
+    case 'eventType': return !!ctx.eventType;
+    case 'guests': return ctx.guests != null;
+    case 'ages': return ctx.ageMin != null || ctx.hasKids === false;
+    case 'venue': return !!ctx.setting;
+    case 'pref': return ctx.prefs.length > 0;
+  }
+}
+function missingFields(ctx){ return CORE_FIELDS.filter(f => !isKnown(ctx,f) && ctx.asked[f] !== true); }
+function isReady(ctx){
+  const have = f => isKnown(ctx,f) || ctx.asked[f] === true;
+  if(!ctx.eventType && !ctx.prefs.length) return false;
+  return have('venue') && have('pref') && (have('guests') || have('ages')) && have('eventType');
+}
+
+function eventNoun(ctx){ return ctx.eventType === 'birthday' || ctx.eventType === 'summer' || ctx.eventType === 'party' || ctx.eventType === 'graduation' || ctx.eventType === 'block' ? 'party' : 'event'; }
+
+function questionFor(f, ctx, second){
+  const n = eventNoun(ctx);
+  const kidsFocus = ctx.hasKids || ['birthday','school'].includes(ctx.eventType);
+  const q = {
+    eventType: ['What kind of event are you planning \u2014 a birthday, school event, company picnic or something else', 'what kind of event it is'],
+    guests: [ctx.eventType === 'school' ? 'About how many students or guests are you expecting' : kidsFocus ? 'About how many kids will be there' : 'Roughly how many guests are you expecting', ''],
+    ages: [ctx.eventType === 'corporate' || ctx.eventType === 'wedding' || ctx.eventType === 'reunion' || ctx.eventType === 'community' ? 'Will kids be joining too' : ctx.guests != null ? 'What age group are the children' : 'What age group are they', ''],
+    venue: [`Will the ${n} be indoors or outdoors`, ''],
+    pref: [prefQuestion(ctx), ''],
+  }[f][0];
+  return second ? q.charAt(0).toLowerCase() + q.slice(1) : q;
+}
+function prefQuestion(ctx){
+  const teens = ctx.ageMin != null && ctx.ageMin >= 12;
+  const opts = teens ? ['interactive challenges','sports games','gaming']
+    : ctx.eventType === 'corporate' ? ['team and sports games','inflatables','carnival-style games']
+    : ctx.eventType === 'wedding' ? ['a photo booth','lawn games','a dance floor']
+    : ctx.setting === 'indoor' ? ['inflatables','interactive games','carnival games']
+    : ['inflatables','water activities','interactive games'];
+  return `Do you have a preference for ${opts.join(', ')}, or a combination`;
+}
+function chipsFor(f, ctx){
+  switch(f){
+    case 'eventType': return ['Birthday party','School event','Corporate family day','Community festival'];
+    case 'guests': return ctx.hasKids || ['birthday','school'].includes(ctx.eventType) ? ['About 15 kids','25\u201350 kids','50\u2013100 kids','100+ kids'] : ['About 25 guests','50\u2013100 guests','100\u2013250 guests','250+ guests'];
+    case 'ages': return ['corporate','wedding','reunion','community'].includes(ctx.eventType) ? ['Mix of kids & adults','Mostly kids','Adults only'] : ['Ages 3\u20136','Ages 7\u201310','Tweens & teens','All ages'];
+    case 'venue': return ['Outdoors','Indoors','Both'];
+    case 'pref': {
+      const teens = ctx.ageMin != null && ctx.ageMin >= 12;
+      if(teens) return ['Interactive challenges','Sports games','Gaming','A combination'];
+      if(ctx.eventType === 'corporate') return ['Team & sports games','Inflatables','Carnival games','A combination'];
+      if(ctx.setting === 'indoor') return ['Inflatables','Interactive games','Carnival games','A combination'];
+      return ['Inflatables','Water activities','Interactive games','A combination'];
+    }
+  }
+  return [];
+}
+
+const PRAISE = {
+  birthday:'That sounds like a fun event!', school:'School events are some of our favourites to help with.', corporate:'A family day is a great way to bring everyone together.',
+  church:'Church events are always a great time.', graduation:'Congratulations to your grad!', wedding:'Congratulations! Let\u2019s make the reception one to remember.',
+  reunion:'Reunions are perfect for games everyone can join.', block:'Block parties are a blast.', fundraiser:'Love it \u2014 fun is a great way to raise funds.',
+  community:'Carnivals and festivals are right in our wheelhouse.', summer:'Nothing beats cooling off at a summer party.', party:'Sounds like a great celebration!',
+};
+
+function describeEvent(ctx){
+  const parts = [];
+  let head = ctx.eventLabel ? ctx.eventLabel.toLowerCase() : 'your event';
+  if(ctx.eventLabel) head = (/^[aeiou]/.test(head) ? 'an ' : 'a ') + head;
+  parts.push(head);
+  if(ctx.guestsLabel) parts.push(`for ${ctx.guestsLabel.replace(/^About /,'about ')}`);
+  if(ctx.ageLabel && ctx.ageLabel !== 'All ages' && ctx.ageLabel !== 'Adults') parts.push(`aged ${ctx.ageLabel.replace('Around ','around ')}`);
+  let out = parts.join(' ');
+  if(ctx.setting) out += ctx.setting === 'both' ? ', with indoor and outdoor space' : `, ${ctx.setting}s`;
+  return out;
+}
+
+function acknowledge(changed, ctx, next){
+  const has = k => changed.includes(k);
+  const bits = [];
+  if(has('eventType')){
+    let line = ctx.eventLabel ? (/^[aeiou]/i.test(ctx.eventLabel) ? 'An ' : 'A ') + ctx.eventLabel.toLowerCase() : 'Your event';
+    if(has('guests')) line += ` for ${ctx.guestsLabel.replace(/^About /,'about ')}`;
+    return `${line} \u2014 ${PRAISE[ctx.eventType].charAt(0).toLowerCase() + PRAISE[ctx.eventType].slice(1)}` + extraAcks(changed, ctx, ['guests']);
+  }
+  if((has('ageLabel') || has('setting')) && next === 'pref'){
+    const a = ctx.ageLabel ? (ctx.ageLabel === 'All ages' ? 'a mixed-age crowd' : ctx.ageLabel === 'Adults' ? 'an adult crowd' : `${ctx.ageLabel.replace('Around ','')}${ctx.ageMin===ctx.ageMax?'-year-olds':' year olds'}`) : null;
+    const v = ctx.setting ? (ctx.setting === 'both' ? 'indoor and outdoor space' : `an ${ctx.setting} setup`) : null;
+    return `Great! For ${[a,v].filter(Boolean).join(' and ')}, I can suggest some ${ctx.exciting || !ctx.calm ? 'active' : 'fun'} options.` + extraAcks(changed, ctx, ['ageLabel','setting','venueName']);
+  }
+  if(has('guests')) bits.push(ctx.guestsLabel.replace(/^About /,'about '));
+  if(has('ageLabel')) bits.push(ctx.ageLabel === 'All ages' ? 'all ages' : ctx.ageLabel === 'Adults' ? 'adults' : `ages ${ctx.ageLabel.replace('Around ','around ')}`);
+  if(has('setting')) bits.push(ctx.setting === 'both' ? 'indoors and outdoors' : ctx.setting + 's');
+  if(has('venueName') && !has('setting')) bits.push(`at the ${ctx.venueName.toLowerCase()}`);
+  if(has('prefs')) bits.push(ctx.prefs.filter(p=>p!=='combination').map(p => PREF_LABELS[p].toLowerCase()).join(' + ') || 'a mix of everything');
+  let out = bits.length ? `Got it \u2014 ${bits.join(', ')}.` : '';
+  return (out + extraAcks(changed, ctx, [])).trim();
+}
+function extraAcks(changed, ctx, skip){
+  const out = [];
+  if(changed.includes('theme') && !skip.includes('theme')) out.push(`A ${ctx.theme} theme sounds fantastic.`);
+  if(changed.includes('date')) out.push(`I've noted ${ctx.date.replace(' (date TBC)','')} as your date.`);
+  if(changed.includes('spaceLabel')) out.push(ctx.spaceDims ? `About ${ctx.spaceLabel} of space \u2014 noted.` : `${ctx.spaceLabel} \u2014 great, that opens up more options.`);
+  if(changed.includes('exciting')) out.push('I\u2019ll lean toward high-energy options.');
+  if(changed.includes('budget')) out.push(ctx.budget === 'Budget-conscious' ? 'I\u2019ll keep things focused on high-value picks.' : `Thanks for sharing your budget (${ctx.budget.toLowerCase()}). I can\u2019t quote prices here, but our team will confirm exact pricing.`);
+  if(changed.includes('duration')) out.push(`${ctx.duration} \u2014 noted.`);
+  if(changed.includes('special')){
+    const last = ctx.special[ctx.special.length-1];
+    if(last === 'No power on site') out.push('I\u2019ve noted there\u2019s no power on site, so I\u2019ll include a generator option.');
+    else out.push(`I\u2019ve noted: ${last.toLowerCase()}. Our team will plan the setup around it.`);
+  }
+  if(changed.includes('negatives')) out.push(`No ${ctx.negatives[ctx.negatives.length-1]} \u2014 understood.`);
+  return out.length ? ' ' + out.join(' ') : '';
+}
+
+function infoAnswer(s, ctx){
+  if(s.intent.price) return 'I can\u2019t give prices here \u2014 rates depend on your date, location and rental length, and our team confirms them with every quote. Once you\u2019ve picked a few favourites, tap **Request a Quote** and you\u2019ll get exact pricing.';
+  if(s.intent.availability) return 'I can\u2019t check the live booking calendar, so I won\u2019t promise availability. Add what you like to your event and request a quote \u2014 the team will confirm what\u2019s open for your date.';
+  if(s.intent.service) return 'Every Fun on the Run rental is **full service**: we deliver, set up and tear down, and we\u2019re fully insured. You just enjoy the party.';
+  if(s.intent.safety) return 'All rentals are set up by the Fun on the Run crew and are fully insured. Our team can walk you through the safety guidelines for each item, like supervision and rider limits, when you book.';
+  if(s.intent.weather) return 'Weather matters for inflatables, especially wind and storms. The team will explain the weather policy for your rentals when they confirm your quote, and I can suggest indoor-friendly options as a backup.';
+  if(s.intent.area) return 'Fun on the Run is family owned and based in Peoria, IL, serving Central Illinois and beyond since 1996. Add your event location in the quote form and the team will confirm delivery.';
+  return null;
+}
+
+function findProduct(low){
+  const keys = [
+    ['dunk-tank',/dunk tank/],['photo-booth',/photo ?booth/],['ninja-rush',/ninja/],['tropical-combo',/tropical|bounce (?:&|and) slide/],['castle-classic',/castle classic|castle bounce/],
+    ['rainbow-palace',/rainbow palace/],['sports-arena',/sports arena|all-?star/],['mega-rock-slide',/mega|rock slide/],['junior-jungle',/junior jungle/],['toddler-treehouse',/treehouse|soft play/],
+    ['tidal-wave',/tidal wave/],['splash-lagoon',/splash lagoon|wet\/dry/],['surf-racer',/surf racer/],['balloon-battle',/balloon battle|water balloon/],['light-reflex',/reflex/],
+    ['gladiator-joust',/joust|gladiator/],['last-one-standing',/sweeper|last one standing/],['soccer-darts',/soccer darts/],['hoop-shot',/hoop shot/],['field-day-kit',/field day (?:team )?(?:games )?kit|tug.of.war/],
+    ['carnival-station',/carnival game station|game station|ring toss/],['cotton-candy',/cotton candy/],['popcorn',/popcorn/],['snow-cone',/snow ?cone/],['game-theater',/video game theater|game truck|game trailer/],
+    ['vr-arena',/\bvr\b|virtual reality/],['retro-arcade',/arcade/],['led-dance-floor',/dance floor/],['lawn-games',/lawn games|cornhole/],['generator',/generator/],
+  ];
+  for(const [id, rx] of keys) if(rx.test(low)) return CatalogService.byId(id);
+  return null;
+}
+
+/* ---------------------------------------------------------------------
+   AI RESPONSE — the single integration point
+   ---------------------------------------------------------------------
+   generateAIResponse(userMessage, conversationContext) -> Promise<Response>
+   Response shape (keep this contract when switching to a real model):
+     {
+       text:            string   // assistant reply (supports **bold**)
+       chips:           string[] // suggested quick replies
+       recommendations: [{id, why:[string]}] | null
+       productId:       string | null   // show a single product card
+       addProductId:    string | null   // add to "My Event"
+       action:          'reset' | 'openQuote' | 'buildPackage' | null
+     }
+
+   FUTURE OPENAI INTEGRATION (never call OpenAI directly from the browser
+   and never put an API key in frontend code):
+
+     const res = await fetch('/api/event-assistant', {      // your backend
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ message: userMessage, context: conversationContext })
+     });
+     return await res.json();
+
+   On the server, /api/event-assistant would:
+     1. Call the OpenAI API with a system prompt ("You are Fun on the Run's
+        Event Assistant. Only recommend items from the catalogue provided.
+        Never state prices or availability — offer a quote instead.")
+     2. Provide the live catalogue via a tool / function call
+        (e.g. search_rentals({setting, ages, guests, prefs})) so the model
+        can only recommend real products.
+     3. Use structured outputs so the model returns updated context fields
+        and product IDs in the Response shape above.
+   --------------------------------------------------------------------- */
+async function generateAIResponse(userMessage, conversationContext){
+  // --- MOCK IMPLEMENTATION (replace with the backend call above) ---
+  return mockAssistant(userMessage, conversationContext);
+}
+
+function mockAssistant(message, ctx){
+  const low = message.toLowerCase();
+  const s = extractSignals(message, ctx);
+  ctx.history.push({ role:'user', content:message });
+  if(s.intent.reset) return { text:'', action:'reset' };
+
+  const prevLast = ctx.lastAsked;
+  const changed = applySignals(ctx, s);
+  ctx.turns++;
+  // A "not sure / skip" answer closes the question we just asked
+  if(s.intent.skip && prevLast) ctx.asked[prevLast] = true;
+  if(prevLast && prevLast === 'pref' && s.intent.skip && !ctx.prefs.length) ctx.prefs.push('combination');
+
+  const out = { text:'', chips:[], recommendations:null, productId:null, addProductId:null, action:null };
+  const reply = (text, extra = {}) => { Object.assign(out, extra, { text }); ctx.history.push({ role:'assistant', content:text }); return out; };
+
+  // Explicit actions
+  if(s.intent.quote) return reply('Great \u2014 I\u2019ll open the quote form with your event details filled in. The team will follow up about availability and pricing.', { action:'openQuote' });
+  if(s.intent.package) return reply('Let\u2019s put your package together.', { action:'buildPackage' });
+
+  // Product-specific requests
+  const prod = findProduct(low);
+  if(prod && /\badd\b/.test(low)) return reply(`Done \u2014 I\u2019ve added the **${prod.name}** to your event.`, { addProductId:prod.id, productId:prod.id, chips:['Build my package','Show more options'] });
+  if(prod && (s.intent.question || /tell me|details|more about|info/.test(low)) && !changed.some(k => !['prefs','hot','exciting','calm'].includes(k))){
+    return reply(`The **${prod.name}** is ${prod.desc.charAt(0).toLowerCase() + prod.desc.slice(1)} It suits ${CatalogService.ageText(prod).toLowerCase()}, works ${prod.setting === 'both' ? 'indoors or outdoors' : prod.setting + 's'}, and needs about a ${CatalogService.spaceText(prod).replace(' area','')} space.`, { productId:prod.id, chips:['Add it to my event','Show more options'] });
+  }
+
+  // Informational questions
+  const info = infoAnswer(s, ctx);
+  const meaningful = changed.filter(k => !['hot','calm'].includes(k));
+  if(info && !meaningful.length){
+    const next = missingFields(ctx)[0];
+    const follow = ctx.recommended ? '' : next ? ` ${questionFor(next, ctx)}?` : '';
+    if(next && !ctx.recommended){ ctx.asked[next] = true; ctx.lastAsked = next; }
+    return reply(info + follow, { chips: ctx.recommended ? ['Build my package','Request a quote'] : next ? chipsFor(next, ctx) : ['Show recommendations'] });
+  }
+  if(s.intent.greeting && !meaningful.length) return reply('Hi there! Tell me about your event \u2014 what are you celebrating, and roughly how many guests are you expecting?', { chips:chipsFor('eventType', ctx) });
+  if(s.intent.thanks && !meaningful.length) return reply(ctx.recommended ? 'You\u2019re welcome! When you\u2019re ready, build your package or request a quote and the team will take it from there.' : 'You\u2019re welcome! Tell me a bit more about your event whenever you\u2019re ready.', { chips: ctx.recommended ? ['Build my package','Request a quote'] : chipsFor('eventType', ctx) });
+
+  // After recommendations: refine or re-run
+  if(ctx.recommended){
+    const scoring = ['eventType','guests','ageLabel','setting','spaceSize','spaceLabel','prefs','negatives','special','theme','exciting','calm','hasKids'];
+    const rerun = s.intent.more || meaningful.some(k => scoring.includes(k)) || s.intent.recommend;
+    if(rerun){
+      const recs = recommend(ctx, { exclude: s.intent.more ? ctx.shownIds : [] });
+      if(!recs.length) return reply('I\u2019ve shown you everything that fits those details. Want to adjust anything, like the space or age group?', { chips:['Show my original picks','Build my package'] });
+      const ack = acknowledge(changed, ctx, null);
+      const lead = s.intent.more ? 'Here are some other options that fit your event:' : `${ack ? ack + ' ' : ''}I\u2019ve updated my recommendations with that in mind:`;
+      ctx.recommended = recs.map(r => r.p.id); ctx.shownIds.push(...ctx.recommended);
+      return reply(lead, { recommendations: recs.map(r => ({ id:r.p.id, why:r.why })), chips:['Build my package','Show more options','Request a quote'] });
+    }
+    const ack = acknowledge(changed, ctx, null);
+    if(ack) return reply(`${ack} Anything else I should know, or are you ready to build your package?`, { chips:['Build my package','Show more options','Request a quote'] });
+    if(/original picks/.test(low)){
+      const recs = recommend(ctx); ctx.recommended = recs.map(r=>r.p.id);
+      return reply('Here are my top picks again:', { recommendations: recs.map(r => ({ id:r.p.id, why:r.why })), chips:['Build my package','Request a quote'] });
+    }
+    return reply('I can refine these for you \u2014 tell me about your space, date, theme or anything you\u2019d like more (or less) of. Or build your package when you\u2019re happy.', { chips:['Build my package','Show more options','Request a quote'] });
+  }
+
+  // Nothing understood
+  if(!meaningful.length && !s.intent.recommend && !s.intent.skip){
+    const next = missingFields(ctx)[0] || 'eventType';
+    return reply(`I want to make sure I get this right. ${ctx.eventType ? 'Could you tell me' : 'Could you tell me a little about your event \u2014 for example'} ${questionFor(next, ctx, true)}?`, { chips:chipsFor(next, ctx) });
+  }
+
+  // Ready → recommend (or forced by "what would you recommend")
+  const forced = s.intent.recommend && (ctx.eventType || ctx.prefs.length || ctx.setting);
+  const missing = missingFields(ctx);
+  if(isReady(ctx) || forced || (ctx.turns >= 4 && ctx.eventType)){
+    const recs = recommend(ctx);
+    ctx.recommended = recs.map(r => r.p.id); ctx.shownIds.push(...ctx.recommended); ctx.lastAsked = null;
+    const assumptions = [];
+    if(!ctx.setting) assumptions.push('these work indoors or out');
+    if(ctx.ageMin == null && ctx.hasKids !== false) assumptions.push('I\u2019ve kept them suitable for a range of ages');
+    const ack = acknowledge(changed, ctx, null);
+    let text = `Perfect. Based on what you\u2019ve told me \u2014 ${describeEvent(ctx)} \u2014 here\u2019s what I\u2019d recommend:`;
+    if(forced && !isReady(ctx)) text = `${ack ? ack + ' ' : ''}Here are some great starting points for ${describeEvent(ctx)}${assumptions.length ? ` (${assumptions.join('; ')})` : ''}. Tell me more and I\u2019ll fine-tune them:`;
+    return reply(text, { recommendations: recs.map(r => ({ id:r.p.id, why:r.why })), chips:['Build my package','Show more options', ctx.spaceLabel ? 'Request a quote' : 'We have about 40\u2019 \u00d7 60\u2019'] , followUp: !ctx.date || !ctx.spaceLabel ? `If you share ${[!ctx.date && 'the date', !ctx.spaceLabel && 'how much open space you have'].filter(Boolean).join(' and ')}, I can double-check everything fits.` : null });
+  }
+
+  // Ask the next question(s) — never repeat what we already know
+  let ask = [];
+  if(missing[0] === 'eventType'){ ask = ['eventType']; }
+  else if(missing[0] === 'pref'){ ask = ['pref']; }
+  else { ask = missing.filter(f => f !== 'pref').slice(0,2); if(!ask.length) ask = [missing[0]]; }
+  ask.forEach((f,i) => ctx.asked[f] = (i === 0 || ctx.asked[f]) ? true : 'soft');
+  ctx.lastAsked = ask[ask.length-1];
+  if(ask.length === 2 && ask.includes('ages') && ask.includes('guests')) ctx.lastAsked = 'guests';
+  const question = ask.map((f,i) => questionFor(f, ctx, i>0)).join(', and ') + '?';
+  const ack = acknowledge(changed, ctx, ask[0]);
+  return reply(`${ack ? ack + ' ' : ''}${question}`, { chips: chipsFor(ask[0], ctx) });
+}
+
+/* Expose for testing / future modules */
+window.FOTR = { CATALOG, CatalogService, createContext, extractSignals, applySignals, recommend, generateAIResponse };
+</script>
+
+<!-- =====================================================================
+     2) USER INTERFACE
+     ===================================================================== -->
+<script>
+'use strict';
+(function(){
+const $ = (sel, root=document) => root.querySelector(sel);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = s => esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, reduced ? Math.min(ms, 80) : ms));
+const { CatalogService, createContext, generateAIResponse } = window.FOTR;
+
+/* ------------------------------ ICONS ------------------------------ */
+const I = {
+  event:'<path d="M4 8h16v12H4z"/><path d="M4 8l2-4h12l2 4M12 8v12M4 13h16"/>',
+  guests:'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2c2.8.4 5 2.8 5 5.8"/>',
+  age:'<path d="M12 3v3M8 21V11h8v10"/><path d="M5 21h14"/><path d="M12 6c-1.2 0-2 .9-2 2s2 3 2 3 2-1.9 2-3-.8-2-2-2Z"/>',
+  venue:'<path d="M12 21s-7-6.2-7-12a7 7 0 1 1 14 0c0 5.8-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/>',
+  setting:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  date:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  pref:'<path d="m12 3 2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7Z"/>',
+  space:'<path d="M3 9V4h5M21 9V4h-5M3 15v5h5M21 15v5h-5"/>',
+  check:'<path d="m5 12 5 5 9-10"/>', x:'<path d="M6 6l12 12M18 6 6 18"/>', plus:'<path d="M12 5v14M5 12h14"/>',
+  gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9"/><path d="M12 8C10 4 7 4 7 6s3 2 5 2c2 0 5 0 5-2s-3-2-5 2Z"/>',
+  sparkle:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
+  cake:'<path d="M4 21h16v-8H4z"/><path d="M4 16c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 4 0"/><path d="M12 13V9M8 13v-2M16 13v-2"/><path d="M12 9c-.8 0-1.2-.6-1.2-1.3S12 5 12 5s1.2 2 1.2 2.7S12.8 9 12 9Z"/>',
+  school:'<path d="M3 9 12 4l9 5-9 5-9-5Z"/><path d="M7 11.5V16c0 1.5 2.2 3 5 3s5-1.5 5-3v-4.5"/>',
+  briefcase:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>',
+  eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+  tree:'<path d="M12 3 6 11h3l-4 6h14l-4-6h3Z"/><path d="M12 17v4"/>', home:'<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/>',
+  bolt:'<path d="M13 2 4 14h7l-1 8 9-12h-7Z"/>', truck:'<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+  wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4 2.5-2.5Z"/>',
+  undo:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>', shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/>',
+  send:'<path d="M5 12h14M13 6l6 6-6 6"/>', chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/>',
+};
+const icon = (name, sw=2.2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[name]}</svg>`;
+
+/* Friendly assistant avatar (original character) */
+const AI_AVATAR = `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#FFC933"/><path d="M11 13 L20 1.5 L29 13 Z" fill="#EF3E4A"/><circle cx="20" cy="2.5" r="2.5" fill="#1F4FD1"/><path d="M13.5 9.5h13" stroke="#fff" stroke-width="2"/><circle cx="14.5" cy="21" r="2.4" fill="#12245C"/><circle cx="25.5" cy="21" r="2.4" fill="#12245C"/><circle cx="15.3" cy="20.2" r=".8" fill="#fff"/><circle cx="26.3" cy="20.2" r=".8" fill="#fff"/><path d="M14 27c3.3 3.2 8.7 3.2 12 0" stroke="#12245C" stroke-width="2.2" fill="none" stroke-linecap="round"/><circle cx="10.5" cy="26" r="2.2" fill="#FF8A8A" opacity=".7"/><circle cx="29.5" cy="26" r="2.2" fill="#FF8A8A" opacity=".7"/></svg>`;
+
+/* ------------------------------ PRODUCT ART (original SVG illustrations) ------------------------------ */
+const PAL = {
+  'Inflatables':{ bg:'#D6EEFF', ground:'#8FD18B', c:['#EF3E4A','#FFC933','#1F4FD1'] },
+  'Water Attractions':{ bg:'#D2F1FF', ground:'#8FD18B', c:['#1F9BE0','#FFC933','#1F4FD1'] },
+  'Interactive Entertainment':{ bg:'#E4F7E8', ground:'#8FD18B', c:['#1FA463','#FFC933','#1F4FD1'] },
+  'Carnival':{ bg:'#FFEFD6', ground:'#F3D29B', c:['#EF3E4A','#FFFFFF','#FFC933'] },
+  'Gaming':{ bg:'#ECE5FF', ground:'#C9B8F5', c:['#7A4DE0','#1F4FD1','#FFC933'] },
+  'Other Event Entertainment':{ bg:'#FFF4CC', ground:'#F3D98B', c:['#1F4FD1','#EF3E4A','#FFC933'] },
+};
+const ART = {
+  castle:(a,b,c)=>`<rect x="62" y="62" width="116" height="64" rx="10" fill="${a}"/><rect x="48" y="42" width="26" height="86" rx="11" fill="${b}"/><rect x="166" y="42" width="26" height="86" rx="11" fill="${b}"/><path d="M46 48 Q61 18 76 48Z" fill="${c}"/><path d="M164 48 Q179 18 194 48Z" fill="${c}"/><path d="M62 68 Q91 50 120 68 Q149 50 178 68" stroke="${b}" stroke-width="8" fill="none" stroke-linecap="round"/><rect x="88" y="78" width="64" height="40" rx="7" fill="#fff" opacity=".85"/><path d="M104 78v40M120 78v40M136 78v40M88 98h64" stroke="${a}" stroke-width="2" opacity=".45"/><rect x="42" y="124" width="156" height="12" rx="6" fill="${c}"/>`,
+  castle2:(a,b,c)=>ART.castle('#FF7BAC','#B89CFF','#FFC933'),
+  castle3:(a,b,c)=>ART.castle('#1F4FD1','#EF3E4A','#FFC933') + `<circle cx="120" cy="98" r="11" fill="#F28C28"/><path d="M109 98h22M120 87v22" stroke="#12245C" stroke-width="1.6"/>`,
+  combo:(a,b,c)=>`<rect x="30" y="62" width="104" height="64" rx="10" fill="${a}"/><rect x="22" y="44" width="22" height="84" rx="10" fill="${b}"/><rect x="120" y="44" width="22" height="84" rx="10" fill="${b}"/><path d="M20 50 Q33 24 46 50Z" fill="#1FA463"/><path d="M118 50 Q131 24 144 50Z" fill="#1FA463"/><rect x="52" y="78" width="60" height="40" rx="7" fill="#fff" opacity=".85"/><path d="M142 58 C175 70 185 105 214 126 L186 128 C170 110 160 90 142 82Z" fill="${c}"/><path d="M150 66 C176 80 184 104 206 122" stroke="#fff" stroke-width="3" fill="none" opacity=".7"/><rect x="16" y="124" width="200" height="12" rx="6" fill="${c}"/><circle cx="196" cy="42" r="10" fill="#1FA463"/><rect x="194" y="42" width="4" height="30" fill="#8B5A2B"/>`,
+  slide:(a,b,c)=>`<path d="M60 128 V52 Q60 34 78 34 H108 Q126 34 126 52 V128Z" fill="${b}"/><path d="M60 58 L126 58 M60 82 L126 82 M60 106 L126 106" stroke="#fff" stroke-width="3" opacity=".5"/><path d="M126 46 C160 60 170 100 206 128 L170 130 C156 108 146 84 126 72Z" fill="${a}"/><path d="M134 54 C162 70 172 100 196 124" stroke="#fff" stroke-width="3" fill="none" opacity=".7"/><rect x="48" y="124" width="170" height="12" rx="6" fill="${c}"/><circle cx="70" cy="44" r="4" fill="${a}"/><circle cx="116" cy="44" r="4" fill="${a}"/>`,
+  obstacle:(a,b,c)=>`<rect x="14" y="98" width="212" height="30" rx="12" fill="${a}"/><rect x="24" y="64" width="16" height="40" rx="8" fill="${b}"/><rect x="200" y="64" width="16" height="40" rx="8" fill="${b}"/><path d="M52 98 Q70 60 88 98" fill="${c}"/><rect x="98" y="72" width="10" height="28" rx="5" fill="${b}"/><rect x="114" y="72" width="10" height="28" rx="5" fill="${b}"/><rect x="130" y="72" width="10" height="28" rx="5" fill="${b}"/><path d="M152 98 L176 66 L196 98Z" fill="${c}"/><rect x="14" y="124" width="212" height="10" rx="5" fill="${c}"/>`,
+  obstacle2:(a,b,c)=>ART.obstacle('#1FA463','#FFC933','#F28C28') + `<circle cx="70" cy="62" r="7" fill="#1FA463"/><rect x="68" y="62" width="4" height="18" fill="#8B5A2B"/>`,
+  softplay:(a,b,c)=>`<rect x="30" y="96" width="44" height="32" rx="8" fill="${a}"/><rect x="80" y="84" width="36" height="44" rx="8" fill="${c}"/><rect x="122" y="104" width="30" height="24" rx="8" fill="${b}"/><path d="M152 104 Q176 104 200 128 L162 128Z" fill="#1FA463"/><circle cx="52" cy="80" r="12" fill="#FF7BAC"/><rect x="20" y="126" width="200" height="8" rx="4" fill="#B89CFF"/>`,
+  waterslide:(a,b,c)=>`<path d="M56 116 V50 Q56 32 74 32 H100 Q118 32 118 50 V116Z" fill="${b}"/><path d="M118 44 C150 56 164 96 188 112 L160 116 C148 98 138 80 118 70Z" fill="${a}"/><ellipse cx="186" cy="122" rx="36" ry="10" fill="#7FD3F7"/><path d="M166 118 q6-8 12 0 q6-8 12 0 q6-8 12 0" stroke="#fff" stroke-width="2.4" fill="none"/><circle cx="200" cy="96" r="4" fill="#7FD3F7"/><circle cx="210" cy="104" r="3" fill="#7FD3F7"/><circle cx="190" cy="88" r="3" fill="#7FD3F7"/><rect x="44" y="118" width="110" height="10" rx="5" fill="${c}"/>`,
+  waterslide2:(a,b,c)=>ART.combo('#1F9BE0','#FFC933','#00B3A4') + `<circle cx="210" cy="112" r="4" fill="#7FD3F7"/><circle cx="200" cy="104" r="3" fill="#7FD3F7"/>`,
+  waterslide3:(a,b,c)=>`<path d="M40 118 V46 Q40 28 58 28 H104 Q122 28 122 46 V118Z" fill="#EF3E4A"/><path d="M122 38 C156 50 170 94 200 112 L170 116 C154 96 142 76 122 66Z" fill="#1F9BE0"/><path d="M122 62 C152 72 164 102 188 118 L160 120 C148 106 138 92 122 88Z" fill="#FFC933"/><ellipse cx="190" cy="124" rx="40" ry="10" fill="#7FD3F7"/><rect x="30" y="118" width="110" height="10" rx="5" fill="#1F4FD1"/>`,
+  balloon:(a,b,c)=>`<ellipse cx="80" cy="62" rx="18" ry="22" fill="#1F9BE0"/><ellipse cx="120" cy="52" rx="18" ry="22" fill="#EF3E4A"/><ellipse cx="160" cy="64" rx="18" ry="22" fill="#FFC933"/><path d="M80 84v12M120 74v16M160 86v10" stroke="#12245C" stroke-width="1.5"/><path d="M60 118 q12-16 24 0 q12-16 24 0 q12-16 24 0 q12-16 24 0 q12-16 24 0" stroke="#7FD3F7" stroke-width="6" fill="none" stroke-linecap="round"/>`,
+  reflex:(a,b,c)=>`<rect x="46" y="30" width="148" height="96" rx="14" fill="#12245C"/>${[0,1,2].map(r=>[0,1,2,3].map(col=>`<circle cx="${76+col*30}" cy="${54+r*26}" r="10" fill="${(r+col)%3===0?'#FFC933':(r+col)%3===1?'#1FA463':'#33415f'}"/>`).join('')).join('')}<rect x="70" y="124" width="100" height="10" rx="5" fill="${a}"/>`,
+  joust:(a,b,c)=>`<ellipse cx="120" cy="122" rx="100" ry="14" fill="${a}"/><rect x="64" y="82" width="30" height="40" rx="8" fill="${c}"/><rect x="146" y="82" width="30" height="40" rx="8" fill="#EF3E4A"/><path d="M70 60 L170 88" stroke="#12245C" stroke-width="6" stroke-linecap="round"/><circle cx="70" cy="60" r="9" fill="${b}"/><circle cx="170" cy="88" r="9" fill="${b}"/><path d="M70 90 L170 58" stroke="#12245C" stroke-width="6" stroke-linecap="round" opacity=".7"/><circle cx="70" cy="90" r="9" fill="#EF3E4A"/><circle cx="170" cy="58" r="9" fill="#EF3E4A"/>`,
+  sweeper:(a,b,c)=>`<ellipse cx="120" cy="112" rx="104" ry="22" fill="${a}"/><ellipse cx="120" cy="110" rx="84" ry="14" fill="#fff" opacity=".6"/><rect x="112" y="60" width="16" height="50" rx="6" fill="${c}"/><path d="M120 70 L206 100" stroke="#EF3E4A" stroke-width="10" stroke-linecap="round"/><circle cx="120" cy="60" r="10" fill="${b}"/>`,
+  darts:(a,b,c)=>`<circle cx="120" cy="72" r="46" fill="#fff"/><circle cx="120" cy="72" r="36" fill="#EF3E4A"/><circle cx="120" cy="72" r="26" fill="#fff"/><circle cx="120" cy="72" r="16" fill="#1F4FD1"/><circle cx="120" cy="72" r="6" fill="#FFC933"/><circle cx="104" cy="60" r="7" fill="#12245C"/><circle cx="60" cy="118" r="12" fill="#fff" stroke="#12245C" stroke-width="2"/><path d="M52 114l8 4 8-4M60 118v10" stroke="#12245C" stroke-width="1.5"/>`,
+  hoops:(a,b,c)=>`<rect x="44" y="30" width="60" height="44" rx="4" fill="#fff" stroke="#12245C" stroke-width="3"/><rect x="136" y="30" width="60" height="44" rx="4" fill="#fff" stroke="#12245C" stroke-width="3"/><ellipse cx="74" cy="74" rx="14" ry="4" fill="none" stroke="#EF3E4A" stroke-width="3"/><ellipse cx="166" cy="74" rx="14" ry="4" fill="none" stroke="#EF3E4A" stroke-width="3"/><path d="M66 76l4 16h8l4-16M158 76l4 16h8l4-16" stroke="#12245C" stroke-width="1.4" fill="none"/><circle cx="120" cy="104" r="14" fill="#F28C28"/><path d="M106 104h28M120 90v28" stroke="#12245C" stroke-width="1.6"/><rect x="40" y="124" width="160" height="10" rx="5" fill="${a}"/>`,
+  team:(a,b,c)=>`<path d="M30 96 C80 86 160 106 210 96" stroke="#C8923E" stroke-width="7" fill="none" stroke-linecap="round"/><rect x="116" y="84" width="8" height="24" fill="#EF3E4A"/><path d="M50 128 L60 104 L70 128Z" fill="#F28C28"/><path d="M170 128 L180 104 L190 128Z" fill="#F28C28"/><rect x="90" y="40" width="4" height="40" fill="#12245C"/><path d="M94 40 h30 l-6 8 6 8 h-30Z" fill="${c}"/>`,
+  carnival:(a,b,c)=>`<rect x="44" y="64" width="152" height="64" rx="6" fill="#fff" stroke="${a}" stroke-width="3"/><path d="M36 64 L60 30 H180 L204 64Z" fill="${a}"/>${[0,1,2,3,4,5].map(i=>`<path d="M${36+i*28} 64 q14 14 28 0" fill="${i%2?a:c}"/>`).join('')}<circle cx="80" cy="104" r="12" fill="none" stroke="#1F4FD1" stroke-width="4"/><rect x="112" y="92" width="16" height="24" rx="4" fill="#1FA463"/><circle cx="160" cy="106" r="10" fill="#FFC933"/><circle cx="120" cy="28" r="6" fill="${c}"/>`,
+  dunk:(a,b,c)=>`<rect x="56" y="54" width="92" height="74" rx="8" fill="#7FD3F7" stroke="#1F4FD1" stroke-width="4"/><path d="M56 80 q23-8 46 0 q23 8 46 0" stroke="#fff" stroke-width="3" fill="none"/><rect x="66" y="40" width="72" height="8" rx="4" fill="#12245C"/><circle cx="184" cy="72" r="20" fill="#fff" stroke="#EF3E4A" stroke-width="6"/><circle cx="184" cy="72" r="7" fill="#EF3E4A"/><rect x="180" y="92" width="8" height="36" fill="#12245C"/>`,
+  cotton:(a,b,c)=>`<rect x="80" y="84" width="80" height="44" rx="8" fill="${a}"/><circle cx="120" cy="74" r="30" fill="#fff" opacity=".7" stroke="#FF7BAC" stroke-width="3"/><circle cx="110" cy="70" r="12" fill="#FF9CC4"/><circle cx="126" cy="64" r="12" fill="#B6E3FF"/><circle cx="128" cy="78" r="10" fill="#FF9CC4"/><path d="M186 60 l-6 50" stroke="#C8923E" stroke-width="3"/><circle cx="188" cy="54" r="14" fill="#FF9CC4"/>`,
+  popcorn:(a,b,c)=>`<rect x="72" y="36" width="96" height="76" rx="8" fill="#fff" stroke="${a}" stroke-width="4"/><rect x="72" y="36" width="96" height="16" rx="6" fill="${a}"/><circle cx="96" cy="92" r="8" fill="#FFE7A0"/><circle cx="110" cy="96" r="8" fill="#FFE7A0"/><circle cx="126" cy="90" r="8" fill="#FFE7A0"/><circle cx="142" cy="96" r="8" fill="#FFE7A0"/><rect x="80" y="112" width="80" height="16" rx="4" fill="${a}"/>`,
+  snowcone:(a,b,c)=>`<rect x="70" y="80" width="80" height="48" rx="8" fill="#1F4FD1"/><rect x="78" y="44" width="64" height="40" rx="6" fill="#E9F6FF" stroke="#1F4FD1" stroke-width="3"/><path d="M176 70 L190 120 L204 70Z" fill="#FFE7A0"/><circle cx="184" cy="64" r="11" fill="#EF3E4A"/><circle cx="196" cy="64" r="11" fill="#1F9BE0"/>`,
+  gametruck:(a,b,c)=>`<rect x="24" y="48" width="170" height="68" rx="10" fill="${a}"/><rect x="194" y="70" width="28" height="46" rx="6" fill="${b}"/><rect x="40" y="62" width="40" height="26" rx="4" fill="#12245C"/><rect x="92" y="62" width="40" height="26" rx="4" fill="#12245C"/><rect x="144" y="62" width="40" height="26" rx="4" fill="#12245C"/><path d="M48 76h8M52 72v8" stroke="${c}" stroke-width="2.6"/><circle cx="116" cy="75" r="4" fill="${c}"/><circle cx="170" cy="72" r="3" fill="#1FA463"/><circle cx="176" cy="78" r="3" fill="#EF3E4A"/><circle cx="60" cy="120" r="12" fill="#12245C"/><circle cx="170" cy="120" r="12" fill="#12245C"/>`,
+  vr:(a,b,c)=>`<rect x="56" y="54" width="128" height="56" rx="24" fill="${a}"/><rect x="72" y="66" width="42" height="32" rx="14" fill="#12245C"/><rect x="126" y="66" width="42" height="32" rx="14" fill="#12245C"/><path d="M56 80 H36 M184 80 H204" stroke="${b}" stroke-width="8" stroke-linecap="round"/><circle cx="92" cy="80" r="5" fill="${c}"/><circle cx="148" cy="80" r="5" fill="${c}"/>`,
+  arcade:(a,b,c)=>`<path d="M84 30 H156 L162 128 H78Z" fill="${a}"/><rect x="92" y="44" width="56" height="40" rx="4" fill="#12245C"/><rect x="100" y="54" width="10" height="10" fill="${c}"/><rect x="124" y="62" width="12" height="12" fill="#1FA463"/><rect x="86" y="92" width="68" height="12" rx="3" fill="${b}"/><circle cx="102" cy="98" r="3.5" fill="#EF3E4A"/><circle cx="130" cy="98" r="3" fill="${c}"/><circle cx="140" cy="98" r="3" fill="#1FA463"/>`,
+  photo:(a,b,c)=>`<rect x="70" y="40" width="100" height="70" rx="12" fill="${a}"/><circle cx="120" cy="75" r="22" fill="#12245C"/><circle cx="120" cy="75" r="13" fill="#6F8EDC"/><circle cx="114" cy="69" r="4" fill="#fff"/><rect x="138" y="48" width="20" height="10" rx="3" fill="${c}"/><rect x="112" y="110" width="16" height="22" fill="#12245C"/><rect x="184" y="56" width="30" height="40" rx="3" fill="#fff" stroke="${b}" stroke-width="3" transform="rotate(10 199 76)"/>`,
+  dance:(a,b,c)=>`${[0,1,2,3].map(r=>[0,1,2,3,4,5].map(col=>`<rect x="${44+col*26}" y="${44+r*20}" width="24" height="18" rx="3" fill="${['#EF3E4A','#FFC933','#1F4FD1','#1FA463','#7A4DE0','#FF7BAC'][(r+col*2)%6]}" opacity="${(r+col)%2?0.95:0.7}"/>`).join('')).join('')}<circle cx="120" cy="22" r="10" fill="#C9D3E8" stroke="#12245C" stroke-width="2"/>`,
+  lawn:(a,b,c)=>`<rect x="30" y="100" width="56" height="16" rx="4" fill="#C8923E" transform="rotate(-8 58 108)"/><circle cx="52" cy="104" r="5" fill="#12245C"/><rect x="106" y="56" width="12" height="70" fill="#E3B26B"/><rect x="120" y="56" width="12" height="70" fill="#D19A4E"/><rect x="104" y="46" width="30" height="12" fill="#E3B26B"/><circle cx="182" cy="120" r="8" fill="none" stroke="${b}" stroke-width="5"/><rect x="178" y="78" width="6" height="40" fill="${a}"/>`,
+  power:(a,b,c)=>`<rect x="70" y="60" width="100" height="62" rx="10" fill="#1FA463"/><rect x="80" y="70" width="80" height="30" rx="6" fill="#12245C"/><path d="M124 72 L108 88 H120 L114 100 L132 82 H120Z" fill="#FFC933"/><circle cx="90" cy="124" r="8" fill="#12245C"/><circle cx="150" cy="124" r="8" fill="#12245C"/>`,
+};
+function art(p){
+  const pal = PAL[p.group] || PAL['Other Event Entertainment'];
+  const [a,b,c] = pal.c;
+  return `<svg viewBox="0 0 240 160" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of ${esc(p.name)}"><rect width="240" height="160" fill="${pal.bg}"/><circle cx="206" cy="28" r="14" fill="#FFE27A" opacity=".85"/><g fill="#fff" opacity=".8"><ellipse cx="44" cy="26" rx="18" ry="7"/><ellipse cx="58" cy="22" rx="12" ry="7"/></g><ellipse cx="120" cy="144" rx="118" ry="16" fill="${pal.ground}"/>${(ART[p.art]||ART.castle)(a,b,c)}</svg>`;
+}
+
+/* ------------------------------ STATE ------------------------------ */
+const state = { ctx:createContext(), selected:new Map(), busy:false, demo:null, recWhy:{}, lastRecs:[], planEls:[], pkgEls:[] };
+
+/* ------------------------------ ELEMENTS ------------------------------ */
+const log = $('#log'), input = $('#input'), sendBtn = $('#sendBtn'), composer = $('#composer');
+$('#topAvatar').innerHTML = AI_AVATAR;
+
+/* ------------------------------ CHAT RENDERING ------------------------------ */
+function scrollToBottom(){ log.scrollTo({ top: log.scrollHeight, behavior: reduced ? 'auto' : 'smooth' }); }
+function scrollToEl(el){ log.scrollTo({ top: Math.max(0, el.offsetTop - 16), behavior: reduced ? 'auto' : 'smooth' }); }
+
+function addMessage(role, html){
+  const row = document.createElement('div');
+  row.className = `msg ${role} enter`;
+  row.innerHTML = role === 'ai'
+    ? `<span class="avatar">${AI_AVATAR}</span><div class="bubble">${html}</div>`
+    : `<span class="avatar user">${icon('user',2.4)}</span><div class="bubble">${html}</div>`;
+  log.appendChild(row); scrollToBottom();
+  return row;
+}
+function addRich(node){ const wrap = document.createElement('div'); wrap.className = 'rich msg enter'; wrap.style.display='block'; wrap.appendChild(node); log.appendChild(wrap); return wrap; }
+
+function showThinking(){
+  const labels = ['Thinking about your event','Checking our rentals','Matching options to your event'];
+  const row = addMessage('ai', `<span class="dots"><i></i><i></i><i></i></span><span class="think-label">${labels[0]}\u2026</span>`);
+  row.classList.add('thinking');
+  let i = 0; const t = setInterval(() => { i = (i+1) % labels.length; const l = row.querySelector('.think-label'); if(l) l.textContent = labels[i] + '\u2026'; }, 900);
+  row._stop = () => { clearInterval(t); row.remove(); };
+  return row;
+}
+
+async function typeInto(bubble, text){
+  if(reduced){ bubble.innerHTML = fmt(text); return; }
+  const words = text.split(/(\s+)/);
+  let acc = '';
+  bubble.classList.add('caret');
+  const step = Math.max(1, Math.ceil(words.length / 45));
+  for(let i=0; i<words.length; i+=step){
+    acc += words.slice(i, i+step).join('');
+    bubble.innerHTML = fmt(acc);
+    if(i % 6 === 0) scrollToBottom();
+    await new Promise(r => setTimeout(r, 22));
+  }
+  bubble.classList.remove('caret');
+  bubble.innerHTML = fmt(text);
+}
+
+async function aiSay(text){
+  const row = addMessage('ai', '');
+  await typeInto(row.querySelector('.bubble'), text);
+  scrollToBottom();
+  return row;
+}
+
+function clearChips(){ log.querySelectorAll('.chips, .example-label').forEach(c => c.remove()); }
+function renderChips(list, label){
+  clearChips();
+  if(!list || !list.length) return;
+  if(label){ const l = document.createElement('p'); l.className = 'example-label'; l.textContent = label; log.appendChild(l); }
+  const wrap = document.createElement('div'); wrap.className = 'chips';
+  const ACTIONS = { 'Build my package':'buildPackage', 'Request a quote':'openQuote', 'Start a new event':'restart' };
+  list.forEach(txt => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'chip' + (ACTIONS[txt] ? ' action' : ''); b.textContent = txt;
+    b.addEventListener('click', () => {
+      if(state.busy || state.demo) return;
+      if(ACTIONS[txt] === 'buildPackage') return buildPackage();
+      if(ACTIONS[txt] === 'openQuote') return openQuote();
+      if(ACTIONS[txt] === 'restart') return confirmRestart();
+      sendMessage(txt);
+    });
+    wrap.appendChild(b);
+  });
+  log.appendChild(wrap); scrollToBottom();
+}
+
+/* ------------------------------ SEND FLOW ------------------------------ */
+async function sendMessage(text){
+  text = text.trim();
+  if(!text || state.busy) return;
+  state.busy = true; setComposerEnabled(false);
+  clearChips();
+  addMessage('user', esc(text));
+  input.value = ''; autoGrow();
+  const thinking = showThinking();
+  const started = Date.now();
+  let res;
+  try { res = await generateAIResponse(text, state.ctx); }
+  catch(err){ console.error(err); res = { text:'Sorry, something went wrong on my side. Could you try that again?', chips:[] }; }
+  const wait = Math.max(0, 650 + Math.min(700, text.length * 8) - (Date.now() - started));
+  await sleep(wait);
+  thinking._stop();
+  await renderResponse(res);
+  state.busy = false; setComposerEnabled(true);
+  updateSidebar();
+  if(!state.demo && window.matchMedia('(min-width: 1024px)').matches) input.focus({ preventScroll:true });
+}
+
+async function renderResponse(res){
+  if(res.action === 'reset'){ resetConversation(); return; }
+  if(res.text) await aiSay(res.text);
+  if(res.addProductId) addToEvent(res.addProductId, { silent:true });
+  if(res.productId && !res.recommendations){ const g = document.createElement('div'); g.className = 'rec-grid'; g.appendChild(productCard(CatalogService.byId(res.productId))); addRich(g); }
+  if(res.recommendations && res.recommendations.length){
+    state.lastRecs = res.recommendations.map(r => r.id);
+    res.recommendations.forEach(r => state.recWhy[r.id] = r.why);
+    const node = recommendationBlock(res.recommendations);
+    const el = addRich(node);
+    await sleep(250);
+    scrollToEl(el);
+    await sleep(500);
+    const plan = addRich(planPanel());
+    state.planEls.push(plan);
+    if(res.followUp){ await sleep(300); await aiSay(res.followUp); }
+  }
+  if(res.action === 'openQuote'){ await sleep(300); openQuote(); }
+  if(res.action === 'buildPackage'){ await sleep(200); buildPackage(true); return; }
+  renderChips(res.chips);
+}
+
+/* ------------------------------ CARDS ------------------------------ */
+function settingTag(p){
+  const map = { outdoor:['out','Outdoor','tree'], indoor:['in','Indoor','home'], both:['both','Indoor / Outdoor','home'] };
+  const [cls, lbl, ic] = map[p.setting];
+  return `<span class="tag ${cls}">${icon(ic,2.4)}${lbl}</span>`;
+}
+function productCard(p, why){
+  const el = document.createElement('article');
+  el.className = 'card' + (state.selected.has(p.id) ? ' is-added' : '');
+  el.dataset.id = p.id;
+  el.innerHTML = `
+    <div class="card-art">${art(p)}<span class="cat">${esc(p.category)}</span><span class="added-flag">In your event</span></div>
+    <div class="card-body">
+      <h4>${esc(p.name)}</h4>
+      <p>${esc(shortDesc(p.desc))}</p>
+      ${why && why.length ? `<div class="why"><b>Why it fits:</b> ${esc(why.join('. '))}.</div>` : ''}
+      <div class="tags"><span class="tag">${esc(CatalogService.ageText(p))}</span>${settingTag(p)}${p.energy === 'High energy' ? '<span class="tag energy">High energy</span>' : ''}</div>
+      <div class="space-line">${icon('space')}${esc(CatalogService.spaceText(p))}</div>
+      <div class="card-actions">
+        <button class="btn btn-ghost btn-view" type="button">View Details</button>
+        <button class="btn btn-sun btn-add" type="button"></button>
+      </div>
+    </div>`;
+  el.querySelector('.btn-view').addEventListener('click', () => openProduct(p.id));
+  el.querySelector('.btn-add').addEventListener('click', () => toggleEvent(p.id));
+  syncAddButton(el.querySelector('.btn-add'), p.id);
+  return el;
+}
+function shortDesc(d){ const i = d.indexOf('. '); return i > 0 && i < 120 ? d.slice(0, i+1) : d; }
+function syncAddButton(btn, id){
+  const on = state.selected.has(id);
+  btn.classList.toggle('is-added', on);
+  btn.innerHTML = on ? `${icon('check',2.8)}Added` : 'Add to My Event';
+  btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+}
+function recommendationBlock(recs){
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `<div class="rec-title"><h3>Recommended for Your Event</h3><span class="pill">${recs.length} picks</span></div>`;
+  const grid = document.createElement('div'); grid.className = 'rec-grid';
+  recs.forEach(r => { const p = CatalogService.byId(r.id); if(p) grid.appendChild(productCard(p, r.why)); });
+  wrap.appendChild(grid);
+  return wrap;
+}
+
+/* ------------------------------ EVENT PLAN PANEL ------------------------------ */
+function planFacts(){
+  const c = state.ctx;
+  return [
+    ['Event', c.eventLabel], ['Guests', c.guestsLabel], ['Age group', c.ageLabel],
+    ['Venue', c.setting ? (c.setting === 'both' ? 'Indoor & outdoor' : cap(c.setting)) + (c.venueName ? ` \u2014 ${c.venueName}` : '') : null],
+    ['Preference', c.prefs.length ? c.prefs.map(p => window.FOTR_PREFS[p]).join(' + ') : null],
+    ['Date', c.date], ['Space', c.spaceLabel], ['Theme', c.theme ? cap(c.theme) : null],
+  ].filter(f => f[1]);
+}
+function cap(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+function planPanel(){
+  const el = document.createElement('section'); el.className = 'panel'; el.setAttribute('aria-label','Your event plan');
+  el.innerHTML = planInner();
+  bindPlan(el);
+  return el;
+}
+function planInner(){
+  const facts = planFacts();
+  const ids = state.selected.size ? [...state.selected.keys()] : state.lastRecs;
+  return `
+    <div class="panel-head"><span class="badge">${icon('event',2.4)}</span><div><h3>Your Event Plan</h3><p>Everything we\u2019ve gathered so far.</p></div></div>
+    <div class="plan-grid">${facts.map(([k,v]) => `<div class="plan-item"><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join('')}</div>
+    <h4>Recommended Entertainment</h4>
+    <ul class="line-items">${ids.map(id => { const p = CatalogService.byId(id); if(!p) return ''; const on = state.selected.has(id);
+      return `<li class="line-item"><span class="thumb">${art(p)}</span><span class="meta"><b>${esc(p.name)}</b><small>${esc(p.category)}</small></span>${on ? `<span class="state">${'\u2713'} Added</span>` : `<button class="btn btn-ghost btn-sm" data-add="${p.id}" type="button">Add</button>`}</li>`; }).join('')}</ul>
+    ${state.selected.size ? '' : '<p class="note">Tap \u201cAdd to My Event\u201d on the items you like, or build a package from these top picks.</p>'}
+    <div class="panel-actions"><button class="btn btn-blue" data-build type="button">${icon('gift',2.2)}Build My Event Package</button></div>`;
+}
+function bindPlan(el){
+  el.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => addToEvent(b.dataset.add)));
+  el.querySelector('[data-build]').addEventListener('click', () => buildPackage());
+}
+
+/* ------------------------------ PACKAGE BUILDER ------------------------------ */
+function suggestedQty(p){
+  const g = state.ctx.guests || 0;
+  if(g >= 80 && ['Bounce Houses','Combo Units','Interactive Games'].includes(p.category)) return 2;
+  return 1;
+}
+async function buildPackage(fromAI){
+  if(state.busy && !fromAI) return;
+  if(!state.selected.size){
+    const base = state.lastRecs.length ? state.lastRecs : window.FOTR.recommend(state.ctx).map(r => r.p.id);
+    base.filter(id => !CatalogService.byId(id).addon || state.ctx.special.includes('No power on site')).slice(0,3).forEach(id => state.selected.set(id, suggestedQty(CatalogService.byId(id))));
+    if(state.ctx.special.includes('No power on site') && state.lastRecs.includes('generator')) state.selected.set('generator',1);
+    syncAll();
+  }
+  clearChips();
+  if(!fromAI) addMessage('user', 'Build my event package');
+  state.busy = true; setComposerEnabled(false);
+  const t = showThinking(); await sleep(800); t._stop();
+  const bigCrowd = [...state.selected.entries()].some(([id,q]) => q > 1);
+  await aiSay(`Here\u2019s your suggested package. ${bigCrowd ? 'With your guest count, I\u2019ve doubled up on a couple of items to keep lines short. ' : ''}Adjust quantities or remove anything, then request a quote \u2014 nothing is booked yet.`);
+  const el = addRich(packagePanel());
+  state.pkgEls.push(el);
+  await sleep(200); scrollToEl(el);
+  state.busy = false; setComposerEnabled(true);
+  renderChips(['Request a quote','Show more options']);
+  updateSidebar();
+}
+function packagePanel(){
+  const el = document.createElement('section'); el.className = 'panel'; el.setAttribute('aria-label','Your suggested package');
+  el.innerHTML = packageInner(); bindPackage(el); return el;
+}
+function packageInner(){
+  const c = state.ctx;
+  const items = [...state.selected.entries()];
+  const perfectFor = c.guestsLabel || (c.ageLabel ? `Ages ${c.ageLabel}` : 'Your guests');
+  return `
+    <div class="panel-head"><span class="badge">${icon('gift',2.4)}</span><div><h3>Your Suggested Package</h3><p>${items.length} item${items.length===1?'':'s'} \u2014 edit anything below.</p></div></div>
+    <h4>Entertainment</h4>
+    ${items.length ? `<ul class="line-items">${items.map(([id,q]) => { const p = CatalogService.byId(id);
+      return `<li class="line-item"><span class="thumb">${art(p)}</span><span class="meta"><b>${esc(p.name)}</b><small>${esc(p.category)} \u00b7 ${esc(CatalogService.spaceText(p))}</small></span>
+        <span class="qty" aria-label="Quantity for ${esc(p.name)}"><button type="button" data-dec="${id}" aria-label="Decrease">\u2212</button><span>${q}</span><button type="button" data-inc="${id}" aria-label="Increase">+</button></span>
+        <button class="rm" type="button" data-rm="${id}" aria-label="Remove ${esc(p.name)}">${icon('x',2.4)}</button></li>`; }).join('')}</ul>`
+      : '<p class="empty-mini">Your package is empty. Add items from the recommendations above.</p>'}
+    <div class="pkg-facts">
+      <span><b>Perfect for:</b> ${esc(perfectFor)}</span>
+      <span><b>Event type:</b> ${esc(c.eventLabel || 'Your event')}</span>
+      <span><b>Setup:</b> ${esc(c.setting ? (c.setting === 'both' ? 'Indoor & outdoor' : cap(c.setting)) : 'To be confirmed')}</span>
+      ${c.date ? `<span><b>Date:</b> ${esc(c.date)}</span>` : ''}
+    </div>
+    <div class="included"><span>${icon('truck',2.4)}Delivery</span><span>${icon('wrench',2.4)}Set up</span><span>${icon('undo',2.4)}Tear down</span><span>${icon('shield',2.4)}Fully insured</span></div>
+    <p class="note">Pricing and availability are confirmed by the Fun on the Run team. Requesting a quote doesn\u2019t commit you to anything.</p>
+    <div class="panel-actions">
+      <button class="btn btn-sun" data-quote type="button" ${items.length ? '' : 'disabled'}>Request a Quote</button>
+      <button class="btn btn-ghost" data-restart type="button">Start Over</button>
+    </div>`;
+}
+function bindPackage(el){
+  el.querySelectorAll('[data-inc]').forEach(b => b.addEventListener('click', () => { const id = b.dataset.inc; state.selected.set(id, Math.min(9, state.selected.get(id)+1)); syncAll(); }));
+  el.querySelectorAll('[data-dec]').forEach(b => b.addEventListener('click', () => { const id = b.dataset.dec; const q = state.selected.get(id)-1; if(q <= 0) state.selected.delete(id); else state.selected.set(id, q); syncAll(); }));
+  el.querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => removeFromEvent(b.dataset.rm)));
+  el.querySelector('[data-quote]').addEventListener('click', openQuote);
+  el.querySelector('[data-restart]').addEventListener('click', () => confirmRestart());
+}
+
+/* ------------------------------ SELECTION ------------------------------ */
+function addToEvent(id, opts = {}){
+  if(!state.selected.has(id)) state.selected.set(id, suggestedQty(CatalogService.byId(id)));
+  syncAll();
+  if(!opts.silent) toast(`Added ${CatalogService.byId(id).name} to your event`);
+}
+function removeFromEvent(id){ state.selected.delete(id); syncAll(); toast(`Removed ${CatalogService.byId(id).name}`); }
+function toggleEvent(id){ state.selected.has(id) ? removeFromEvent(id) : addToEvent(id); }
+function syncAll(){
+  document.querySelectorAll('.card').forEach(c => { const id = c.dataset.id; c.classList.toggle('is-added', state.selected.has(id)); const b = c.querySelector('.btn-add'); if(b) syncAddButton(b, id); });
+  const plan = state.planEls[state.planEls.length-1];
+  if(plan && plan.isConnected){ const panel = plan.querySelector('.panel'); panel.innerHTML = planInner(); bindPlan(panel); }
+  const pkg = state.pkgEls[state.pkgEls.length-1];
+  if(pkg && pkg.isConnected){ const panel = pkg.querySelector('.panel'); panel.innerHTML = packageInner(); bindPackage(panel); }
+  updateSidebar();
+  const pb = $('#pdAdd'); if(pb) syncAddButton(pb, pb.dataset.id);
+}
+
+/* ------------------------------ SIDEBAR ------------------------------ */
+const FIELD_DEFS = [
+  ['eventLabel','Event type','event'], ['guestsLabel','Guest count','guests'], ['ageLabel','Age group','age'],
+  ['venueName','Venue','venue'], ['setting','Indoor / Outdoor','setting'], ['date','Event date','date'], ['prefs','Entertainment preference','pref'],
+];
+let lastFieldValues = {};
+function fieldValue(key){
+  const c = state.ctx;
+  if(key === 'setting') return c.setting ? { indoor:'Indoor', outdoor:'Outdoor', both:'Indoor & outdoor' }[c.setting] : null;
+  if(key === 'prefs') return c.prefs.length ? c.prefs.map(p => window.FOTR_PREFS[p]).join(' + ') : null;
+  return c[key];
+}
+function updateSidebar(){
+  const ul = $('#fields'); let filled = 0;
+  ul.innerHTML = FIELD_DEFS.map(([key,label,ic]) => {
+    const v = fieldValue(key); if(v) filled++;
+    const flash = v && lastFieldValues[key] !== v;
+    return `<li class="field ${v ? 'filled' : 'empty'} ${flash ? 'flash' : ''}"><span class="fi">${icon(ic)}</span><span class="fl"><small>${label}</small><b>${v ? esc(v) : 'Not shared yet'}</b></span></li>`;
+  }).join('');
+  FIELD_DEFS.forEach(([key]) => lastFieldValues[key] = fieldValue(key));
+  setTimeout(() => ul.querySelectorAll('.flash').forEach(f => f.classList.remove('flash')), 1200);
+  $('#progressBar').style.width = `${(filled/7)*100}%`;
+  $('#progressLabel').textContent = `${filled} of 7 details`;
+  $('#profileSub').textContent = filled === 0 ? 'We\u2019ll build your event profile as we chat.' : filled >= 5 ? 'Looking great \u2014 your profile is almost complete.' : 'Building your event profile\u2026';
+  $('#detailsCount').textContent = filled;
+  const c = state.ctx;
+  const extras = [c.spaceLabel && `Space: ${c.spaceLabel}`, c.duration && `Duration: ${c.duration}`, c.budget && `Budget: ${c.budget}`, c.theme && `Theme: ${cap(c.theme)}`, ...c.special, ...c.negatives.map(n => `No ${n}`)].filter(Boolean);
+  $('#extras').innerHTML = extras.map(e => `<span>${esc(e)}</span>`).join('');
+  // My event
+  const list = $('#myEventList'); const n = [...state.selected.values()].reduce((a,b)=>a+b,0);
+  $('#myCount').textContent = `${n} item${n===1?'':'s'}`;
+  list.innerHTML = state.selected.size ? [...state.selected.entries()].map(([id,q]) => { const p = CatalogService.byId(id);
+    return `<li><span class="thumb">${art(p)}</span><span class="nm">${q>1?q+' \u00d7 ':''}${esc(p.name)}</span><button class="rm" type="button" data-side-rm="${id}" aria-label="Remove ${esc(p.name)}">${icon('x',2.4)}</button></li>`; }).join('')
+    : '<li class="empty-mini" style="font-weight:600">Items you add will appear here.</li>';
+  list.querySelectorAll('[data-side-rm]').forEach(b => b.addEventListener('click', () => removeFromEvent(b.dataset.sideRm)));
+  $('#sideBuild').disabled = !(state.selected.size || state.lastRecs.length);
+}
+window.FOTR_PREFS = { inflatables:'Inflatables', slides:'Slides', water:'Water activities', obstacle:'Obstacle courses', interactive:'Interactive games', sports:'Sports & team games', carnival:'Carnival games', gaming:'Gaming', photo:'Photo booth', concessions:'Concessions', softplay:'Soft play', dance:'Dance floor', combination:'A combination' };
+
+/* ------------------------------ PRODUCT MODAL ------------------------------ */
+let lastFocus = null;
+function openModal(id){ lastFocus = document.activeElement; const m = $('#'+id); m.classList.add('open'); document.body.style.overflow = 'hidden'; setTimeout(() => { const f = m.querySelector('input, button:not(.modal-close), .modal-close'); f && f.focus(); }, 30); }
+function closeModal(id){ const m = $('#'+id); m.classList.remove('open'); if(!document.querySelector('.modal.open')) document.body.style.overflow = ''; lastFocus && lastFocus.focus && lastFocus.focus({ preventScroll:true }); }
+document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if(e.target.closest('[data-close]')) closeModal(m.id); }));
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){ const open = document.querySelector('.modal.open'); if(open) closeModal(open.id); else closeDrawer(); }
+  if(e.key === 'Tab'){ const open = document.querySelector('.modal.open'); if(!open) return; const f = [...open.querySelectorAll('button, input, textarea, a[href]')].filter(x => !x.disabled && x.offsetParent !== null); if(!f.length) return; const first = f[0], last = f[f.length-1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); } else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); } }
+});
+
+function openProduct(id){
+  const p = CatalogService.byId(id); const why = state.recWhy[id];
+  $('#productBox').innerHTML = `
+    <button class="modal-close" data-close type="button" aria-label="Close">${icon('x',2.4)}</button>
+    <div class="pd-art">${art(p)}</div>
+    <div class="pd-body">
+      <span class="cat">${esc(p.group)} \u2014 ${esc(p.category)}</span>
+      <h3 id="pdTitle">${esc(p.name)}</h3>
+      <p class="desc">${esc(p.desc)}</p>
+      <div class="pd-specs">
+        <div class="pd-spec"><small>Age range</small><b>${esc(CatalogService.ageText(p))}</b></div>
+        <div class="pd-spec"><small>Setup type</small><b>${esc(CatalogService.settingText(p))}</b></div>
+        <div class="pd-spec"><small>Space requirement</small><b>${esc(CatalogService.spaceText(p))}</b></div>
+        <div class="pd-spec"><small>Capacity</small><b>${esc(p.capacity)}</b></div>
+        <div class="pd-spec"><small>Power</small><b>${esc(p.power)}</b></div>
+        <div class="pd-spec"><small>Energy level</small><b>${esc(p.energy)}</b></div>
+      </div>
+      <div class="pd-cols">
+        <div><h4>Ideal for</h4><ul class="ticks">${p.idealFor.map(x => `<li>${icon('check',2.6)}${esc(x)}</li>`).join('')}</ul></div>
+        <div><h4>Key features</h4><ul class="ticks">${p.features.map(x => `<li>${icon('check',2.6)}${esc(x)}</li>`).join('')}</ul></div>
+      </div>
+      ${why && why.length ? `<div class="pd-why"><b>Why we suggested it:</b> ${esc(why.join('. '))}.</div>` : ''}
+      <p class="note">Space shown is the unit footprint. Our team confirms clearance, surface and power needs for your venue. Pricing is provided with your quote.</p>
+      <div class="pd-actions">
+        <button class="btn btn-sun" id="pdAdd" data-id="${p.id}" type="button"></button>
+        <button class="btn btn-ghost" data-close type="button">Keep browsing</button>
+      </div>
+    </div>`;
+  const b = $('#pdAdd'); syncAddButton(b, p.id);
+  b.addEventListener('click', () => toggleEvent(p.id));
+  openModal('productModal');
+}
+
+/* ------------------------------ QUOTE MODAL ------------------------------ */
+function openQuote(){
+  const c = state.ctx;
+  const items = [...state.selected.entries()];
+  $('#quoteBox').innerHTML = `
+    <button class="modal-close" data-close type="button" aria-label="Close">${icon('x',2.4)}</button>
+    <div class="form-head"><h3 id="qTitle">Request a Quote</h3><p>Share a few details and the Fun on the Run team will follow up with availability and pricing.</p></div>
+    <form class="quote" id="quoteForm" novalidate>
+      <div class="fg"><label for="qName">Name <i>*</i></label><input id="qName" name="name" autocomplete="name" required><span class="err">Please enter your name.</span></div>
+      <div class="fg"><label for="qEmail">Email <i>*</i></label><input id="qEmail" name="email" type="email" autocomplete="email" required><span class="err">Please enter a valid email.</span></div>
+      <div class="fg"><label for="qPhone">Phone <i>*</i></label><input id="qPhone" name="phone" type="tel" autocomplete="tel" required placeholder="(309) 555-0123"><span class="err">Please enter a phone number with at least 10 digits.</span></div>
+      <div class="fg"><label for="qDate">Event date</label><input id="qDate" name="date" type="date" value="${c.dateISO || ''}"></div>
+      <div class="fg"><label for="qLoc">Event location</label><input id="qLoc" name="location" placeholder="Address or city" value="${c.venueName ? esc(c.venueName) + ', ' : ''}"></div>
+      <div class="fg"><label for="qGuests">Number of guests</label><input id="qGuests" name="guests" type="number" min="1" inputmode="numeric" value="${c.guests || ''}"></div>
+      <div class="fg full"><label>Selected entertainment</label>
+        ${items.length ? `<div class="sel-list">${items.map(([id,q]) => `<span>${q} \u00d7 ${esc(CatalogService.byId(id).name)}</span>`).join('')}</div>` : '<p class="sel-empty">Nothing selected yet \u2014 tell us what you\u2019re interested in below.</p>'}
+      </div>
+      <div class="fg full"><label for="qNotes">Anything else we should know?</label><textarea id="qNotes" name="notes" rows="3">${esc(notesFromContext())}</textarea></div>
+      <div class="form-foot">
+        <button class="btn btn-sun btn-lg" type="submit" id="qSubmit">Request My Quote</button>
+        <p class="note">No payment needed. We\u2019ll only use your details to follow up on this request.</p>
+      </div>
+    </form>`;
+  $('#quoteForm').addEventListener('submit', submitQuote);
+  $('#quoteForm').querySelectorAll('input').forEach(i => i.addEventListener('input', () => i.closest('.fg').classList.remove('invalid')));
+  openModal('quoteModal');
+}
+function notesFromContext(){
+  const c = state.ctx; const bits = [];
+  if(c.eventLabel) bits.push(`Event: ${c.eventLabel}`);
+  if(c.ageLabel) bits.push(`Ages: ${c.ageLabel}`);
+  if(c.setting) bits.push(`Setting: ${cap(c.setting)}`);
+  if(c.spaceLabel) bits.push(`Space: ${c.spaceLabel}`);
+  if(c.duration) bits.push(`Duration: ${c.duration}`);
+  if(c.theme) bits.push(`Theme: ${cap(c.theme)}`);
+  if(c.special.length) bits.push(`Notes: ${c.special.join('; ')}`);
+  return bits.join(' | ');
+}
+async function submitQuote(e){
+  e.preventDefault();
+  const f = e.target; let ok = true;
+  const chk = (id, test) => { const el = $('#'+id); const good = test(el.value.trim()); el.closest('.fg').classList.toggle('invalid', !good); if(!good && ok){ el.focus(); ok = false; } };
+  chk('qName', v => v.length >= 2);
+  chk('qEmail', v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v));
+  chk('qPhone', v => v.replace(/\D/g,'').length >= 10);
+  if(!ok) return;
+  const btn = $('#qSubmit'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Sending\u2026';
+  const lead = {
+    name:f.name.value.trim(), email:f.email.value.trim(), phone:f.phone.value.trim(), eventDate:f.date.value, location:f.location.value.trim(),
+    guests:f.guests.value, notes:f.notes.value.trim(),
+    entertainment:[...state.selected.entries()].map(([id,qty]) => ({ id, name:CatalogService.byId(id).name, qty })),
+    context:{ ...state.ctx, history:undefined }, submittedAt:new Date().toISOString(),
+  };
+  // FUTURE: POST the lead to your backend / CRM, e.g.
+  // await fetch('/api/quote-requests', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(lead) });
+  await sleep(1300);
+  (window.FOTR_LEADS = window.FOTR_LEADS || []).push(lead);
+  console.info('[POC] Lead captured', lead);
+  const ref = 'FOTR-' + Math.random().toString(36).slice(2,7).toUpperCase();
+  $('#quoteBox').innerHTML = `
+    <button class="modal-close" data-close type="button" aria-label="Close">${icon('x',2.4)}</button>
+    <div class="success" role="status">
+      <div class="check">${icon('check',3)}</div>
+      <h3 id="qTitle">Request received</h3>
+      <p>Thanks! Your event request has been captured. A Fun on the Run team member can follow up with you regarding availability and pricing.</p>
+      <span class="ref">Reference: ${ref}</span><br>
+      <button class="btn btn-blue" data-close type="button">Back to my event</button>
+    </div>`;
+  $('#quoteBox .btn').focus();
+  aiSayLater(`Your quote request is in (reference ${ref}). The team will be in touch at ${lead.email}. Anything else I can help you plan?`);
+}
+async function aiSayLater(text){ await sleep(400); clearChips(); await aiSay(text); renderChips(['Start a new event']); }
+
+/* ------------------------------ WELCOME / RESET ------------------------------ */
+const EXAMPLES = ["I'm planning a birthday party for 30 kids.", 'What would you recommend for a school carnival?', 'I need entertainment for a corporate family day.', 'We have a large outdoor space and want something exciting.'];
+function welcome(instant){
+  log.innerHTML = '';
+  const row = addMessage('ai', '');
+  const text = "Hi! I'm your Fun on the Run Event Assistant. Tell me a little about your event, and I'll help you find entertainment and rentals that fit your needs.";
+  if(instant) row.querySelector('.bubble').textContent = text; else typeInto(row.querySelector('.bubble'), text);
+  renderChips(EXAMPLES, 'Try asking:');
+}
+function resetConversation(){
+  state.ctx = createContext(); state.selected.clear(); state.recWhy = {}; state.lastRecs = []; state.planEls = []; state.pkgEls = []; lastFieldValues = {};
+  welcome(true); updateSidebar();
+}
+function confirmRestart(){ if(state.busy) return; stopDemo(); resetConversation(); toast('Started a new event'); }
+
+/* ------------------------------ DEMOS ------------------------------ */
+const DEMOS = {
+  birthday:{ title:'Birthday Party', text:"I'm planning a birthday party for 25 kids.", icon:'cake', color:'#FFE4E6', ink:'#B4232E',
+    steps:["I'm planning a birthday party for 25 kids.", "Mostly 6\u20139 year olds, and it's in our backyard.", 'A combination of inflatables and games would be great.'] },
+  school:{ title:'School Event', text:'We need entertainment for a school carnival.', icon:'school', color:'#E4F7E8', ink:'#137A47',
+    steps:['We need entertainment for a school carnival.', "It's for our elementary school \u2014 around 300 students, outdoors on the school field."] },
+  corporate:{ title:'Corporate Event', text:"We're organising a corporate family day.", icon:'briefcase', color:'#E4EEFF', ink:'#1F4FD1',
+    steps:["We're organising a corporate family day.", 'About 150 people \u2014 employees and their kids, mixed ages.', 'Outdoors at a park. Team games and something for the kids would be ideal.'] },
+  summer:{ title:'Summer Party', text:'We need outdoor water entertainment for a summer party.', icon:'sun', color:'#FFF3D1', ink:'#8A5A00',
+    steps:['We need outdoor water entertainment for a summer party.', 'Around 40 guests, mostly kids aged 8 to 12.'] },
+};
+$('#scenarios').innerHTML = Object.entries(DEMOS).map(([k,d]) => `<button class="scenario" type="button" data-demo="${k}"><span class="ico" style="background:${d.color};color:${d.ink}">${icon(d.icon)}</span><b>${d.title}</b><span>\u201c${esc(d.text)}\u201d</span></button>`).join('');
+$('#scenarios').addEventListener('click', e => { const b = e.target.closest('[data-demo]'); if(b) runDemo(b.dataset.demo); });
+
+async function runDemo(key){
+  if(state.demo) stopDemo();
+  while(state.busy) await sleep(100);
+  const d = DEMOS[key]; const token = {}; state.demo = token;
+  document.getElementById('assistant').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block:'start' });
+  resetConversation();
+  $('#demoBanner').classList.add('show'); $('#demoLabel').textContent = `Demo: ${d.title}`;
+  setComposerEnabled(false);
+  await sleep(900);
+  for(const step of d.steps){
+    if(state.demo !== token) return;
+    await typeInComposer(step, token);
+    if(state.demo !== token) return;
+    await sendMessage(step);
+    setComposerEnabled(false);
+    await sleep(1100);
+  }
+  if(state.demo === token){ state.demo = null; $('#demoBanner').classList.remove('show'); setComposerEnabled(true); toast('Demo complete \u2014 try adding items to your event'); }
+}
+async function typeInComposer(text, token){
+  if(reduced){ input.value = text; return; }
+  input.value = '';
+  for(let i=0; i<text.length; i+=2){ if(state.demo !== token) return; input.value = text.slice(0, i+2); autoGrow(); await new Promise(r => setTimeout(r, 18)); }
+  await sleep(250);
+}
+function stopDemo(){ state.demo = null; $('#demoBanner').classList.remove('show'); if(!state.busy) setComposerEnabled(true); }
+$('#stopDemo').addEventListener('click', stopDemo);
+
+/* ------------------------------ COMPOSER ------------------------------ */
+function setComposerEnabled(on){ input.disabled = !on && !!state.demo ? true : false; sendBtn.disabled = !on || !input.value.trim(); }
+function autoGrow(){ input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 140) + 'px'; sendBtn.disabled = state.busy || !input.value.trim(); }
+input.addEventListener('input', autoGrow);
+input.addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); if(!state.demo) sendMessage(input.value); } });
+composer.addEventListener('submit', e => { e.preventDefault(); if(!state.demo) sendMessage(input.value); });
+
+/* ------------------------------ MISC UI ------------------------------ */
+function toast(msg){ const t = $('#toast'); t.innerHTML = `${icon('sparkle',2.4)}<span>${esc(msg)}</span>`; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2400); }
+function focusAssistant(){ document.getElementById('assistant').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block:'start' }); setTimeout(() => input.focus({ preventScroll:true }), reduced ? 0 : 600); }
+$('#startPlanning').addEventListener('click', focusAssistant);
+$('#headerQuote').addEventListener('click', openQuote);
+$('#restartBtn').addEventListener('click', confirmRestart);
+$('#sideBuild').addEventListener('click', () => { closeDrawer(); buildPackage(); });
+const menuBtn = $('#menuBtn'), nav = $('#nav');
+menuBtn.addEventListener('click', () => { const o = nav.classList.toggle('open'); menuBtn.setAttribute('aria-expanded', o); });
+nav.addEventListener('click', e => { if(e.target.closest('a')){ nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded', false); } });
+const sidebar = $('#sidebar'), scrim = $('#scrim'), dToggle = $('#detailsToggle');
+function openDrawer(){ sidebar.classList.add('open'); scrim.classList.add('open'); dToggle.setAttribute('aria-expanded', true); }
+function closeDrawer(){ sidebar.classList.remove('open'); scrim.classList.remove('open'); dToggle.setAttribute('aria-expanded', false); }
+dToggle.addEventListener('click', openDrawer); scrim.addEventListener('click', closeDrawer); $('#drawerClose').addEventListener('click', closeDrawer);
+
+/* ------------------------------ INIT ------------------------------ */
+welcome(false);
+updateSidebar();
+})();
+</script>
+</body>
+</html>
